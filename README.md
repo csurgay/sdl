@@ -8,7 +8,6 @@ Legfőbb célja, hogy **egyértelmű, vizuálisan is áttekinthető módon** ír
 A fejlesztés fő indoka az volt, hogy az informális leírásokból (pl. szöveges specifikációk) **könnyen származhatnak hibák és értelmezési eltérések**. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt gyakran **automatikus kódgenerálást** is.
 
 ---
-
 ## 2. Történeti háttér és szerepe
 
 Az SDL-t az **ITU-T (International Telecommunication Union – Telecommunication Standardization Sector)** fejlesztette ki, eredetileg a **telekommunikációs protokollok** specifikációjára.
@@ -24,7 +23,6 @@ Az SDL-t az **ITU-T (International Telecommunication Union – Telecommunication
 Az SDL tehát az **ITU formális modellezési ökoszisztéma** része. Ma már széles körben használják nemcsak a távközlésben, hanem **beágyazott rendszerek**, **autóipari vezérlők**, és **IoT rendszerek** tervezésénél is.
 
 ---
-
 ## 3. Az SDL alapfogalmai
 
 Az SDL fő jellemzője, hogy **hierarchikusan szervezett** és **gráf-alapú**.
@@ -46,7 +44,6 @@ A rendszer **aszinkron üzenetküldéssel** kommunikál, azaz a folyamatok **üz
 Ez a modell kiválóan leírja a **valós idejű rendszerek viselkedését**.
 
 ---
-
 ## 4. Az SDL szintaxis és grafikus elemei
 
 Az SDL modellek **diagramokból** épülnek fel.
@@ -67,7 +64,6 @@ Fő típusai:
 * **Task** → belső művelet vagy számítás
 
 ---
-
 ## 5. Példa 1 – Egyszerű kliens–szerver handshake modell SDL-ben
 
 Képzeljünk el egy protokollt, ahol:
@@ -77,10 +73,10 @@ Képzeljünk el egy protokollt, ahol:
 * a Client ezt követően átmegy „Connected” állapotba.
 
 **SDL Process Diagram – Client and Server:**
+
 <img width="405" height="662" alt="image" src="https://github.com/user-attachments/assets/95016d25-a2de-421a-8380-9b3967ca9d82" />
 
 ---
-
 ## 6. Példa 2 – Valós idejű híváskezelő folyamat
 
 Egy tipikus **telefónia modell** SDL-ben három állapotot tartalmazhat:
@@ -125,7 +121,6 @@ Idle
 E modell könnyen bővíthető új funkciókkal (pl. időzítés, timeout, foglalt állapot), és **szimulálható** különböző eszközökben, például *PragmaDev Studio* vagy *Telelogic Tau* környezetben.
 
 ---
-
 ## 7. Kapcsolat más formális eszközökkel
 
 Az SDL gyakran együtt használatos más ITU-T szabványokkal:
@@ -139,7 +134,6 @@ Az SDL gyakran együtt használatos más ITU-T szabványokkal:
 Ezek együtt biztosítják a **model-based development (MBD)** folyamatot.
 
 ---
-
 ## 8. Eszközök és gyakorlati alkalmazások
 
 Néhány elterjedt SDL-eszköz:
@@ -155,7 +149,6 @@ Felhasználás:
 * Biztonságkritikus rendszerek (pl. légiforgalmi kommunikáció)
 
 ---
-
 ## 9. Összefoglalás
 
 Az SDL egy **erőteljes formális nyelv**, amely vizuális, állapotgép-alapú és jól skálázható.
