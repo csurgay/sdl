@@ -8,8 +8,10 @@ Vizuálisan modellezi egy rendszer komplex struktúráját, viselkedését, és 
 
 Korábban az informális leírásokban (pl. szöveges specifikációk) **nehezen ellenőrizhető hibák és féreértelmezések** lehettek. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt gyakran **automatikus kódgenerálást** is.
 
+Az SDL egy **CEFSM** (communicating extended finite state machine).
+
 ---
-## 2. Történeti háttér és szerepe
+## 2. Történeti háttér
 
 Az SDL-t az **ITU-T (International Telecommunication Union)** fejlesztette ki, eredetileg a **telekommunikációs protokollok** specifikációjára.
 
@@ -45,7 +47,7 @@ A rendszer **aszinkron üzenetküldéssel** kommunikál, azaz a folyamatok **pos
 Ez a modell kiválóan leírja a **valós idejű rendszerek viselkedését**.
 
 ---
-## 4. Az SDL szintaxis és grafikus elemei
+## 4. Az SDL szintaxis
 
 Az SDL modellek **diagramokból** épülnek fel.
 Fő típusai:
@@ -58,11 +60,11 @@ Fő típusai:
 
 ### Alap grafikus elemek:
 
-* **Input (bejövő jel)** → nyíl, amely a folyamatba lép
-* **Output (kimenő jel)** → nyíl, amely a folyamatból indul
-* **State (állapot)** → téglalap vagy ovális alak
-* **Decision** → feltételes elágazás
-* **Task** → belső művelet vagy számítás
+* **State (állapot)** → a véges automata alapfogalma, egy processz mindig egy meghatározott állapotban lehet (kivéve, ha átmenetet hajt végre)
+* **Input (bejövő jel)** → állapotot csak akkor hagyhatunk, ha egy Input kivált egy átmenetet
+* **Output (kimenő jel)** → ennek segítségével lüldenek jelet egymásnak a komponensek (processzek)
+* **Decision** → feltételes elágazás, amit egy átmenet közben értékelhetünk ki
+* **Task** → belső művelet vagy számítás, például értékadás változóknak
 
 ---
 ## 5. Példa 1 – Egyszerű kliens–szerver handshake modell SDL-ben
@@ -80,7 +82,7 @@ Képzeljünk el egy protokollt, ahol:
 ---
 ## 6. Példa 2 – Valós idejű híváskezelő folyamat
 
-Egy tipikus **telefónia modell** SDL-ben három állapotot tartalmazhat:
+Egy tipikus egyszerűsített **kimenő telefonhívás modell** SDL-ben három állapotot tartalmazhat:
 
 1. **Idle** – a vonal szabad
 2. **Ringing** – hívás bejövőben
@@ -88,15 +90,15 @@ Egy tipikus **telefónia modell** SDL-ben három állapotot tartalmazhat:
 
 **Események:**
 
-* `CALL_REQ` – hívás érkezik
-* `ACCEPT` – felhasználó felveszi
-* `HANGUP` – hívás befejezése
+* `call_req` – hívás érkezik
+* `accept` – felhasználó felveszi
+* `hangup` – hívás befejezése
 
 **SDL Process Diagram – CallHandler:**
 
 <img width="491" height="497" alt="image" src="https://github.com/user-attachments/assets/d95a5f39-1834-4585-b3cb-c4dcb4c9abf0" />
 
-E modell könnyen bővíthető új funkciókkal (pl. időzítés, timeout, foglalt állapot), és **szimulálható** különböző eszközökben, például *PragmaDev Studio* vagy *Telelogic Tau* környezetben.
+E modell könnyen bővíthető új funkciókkal (pl. időzítés, timeout, foglalt állapot), és **szimulálható** különböző SDL eszközökben.
 
 ---
 ## 7. Kapcsolat más formális eszközökkel
@@ -129,13 +131,11 @@ Felhasználás:
 ---
 ## 9. Összefoglalás
 
-Az SDL egy **erőteljes formális nyelv**, amely vizuális, állapotgép-alapú és jól skálázható.
-Lehetővé teszi:
+Az SDL egy **szabványos formális nyelv**, amely vizuális, állapotgép-alapú és jól skálázható.
 
-* komplex rendszerek **egyértelmű specifikációját**,
-* **szimulációt** és **formális ellenőrzést**,
-* **automatikus kódgenerálást**,
-* valamint **konzisztens dokumentációt** a fejlesztés teljes életciklusa során.
-
-Főként az **5G**, **IoT**, **valós idejű és biztonságkritikus rendszerek** fejlesztésében releváns.
+* komplex rendszerek **egyértelmű specifikációja**
+* **szimuláció** és **formális ellenőrzés**
+* **automatikus kódgenerálás**
+* **konzisztens dokumentáció** a fejlesztés teljes életciklusa során
+* pl. **IoT**, **valós idejű és biztonságkritikus rendszerek**, **autóipari vezérlők** fejlesztésében
 
