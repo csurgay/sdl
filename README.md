@@ -1,6 +1,4 @@
-### **Specification and Description Language (SDL)**
-
----
+# **Specification and Description Language (SDL)**
 
 ## 1. Bevezetés
 
