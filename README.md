@@ -93,30 +93,7 @@ Egy tipikus **telefónia modell** SDL-ben három állapotot tartalmazhat:
 
 **SDL Process Diagram – CallHandler:**
 
-```plaintext
-Start
- |
- v
-Idle
- | input CALL_REQ
- v
-send(RING) / output RING
- |
- v
-Ringing
- | input ACCEPT
- v
-send(CONNECT) / output CONNECT
- |
- v
-Connected
- | input HANGUP
- v
-send(RELEASE) / output RELEASE
- |
- v
-Idle
-```
+<img width="491" height="497" alt="image" src="https://github.com/user-attachments/assets/d95a5f39-1834-4585-b3cb-c4dcb4c9abf0" />
 
 E modell könnyen bővíthető új funkciókkal (pl. időzítés, timeout, foglalt állapot), és **szimulálható** különböző eszközökben, például *PragmaDev Studio* vagy *Telelogic Tau* környezetben.
 
