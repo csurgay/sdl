@@ -76,38 +76,8 @@ Képzeljünk el egy protokollt, ahol:
 * a **Server** válaszol egy `ACK` jelzéssel,
 * a Client ezt követően átmegy „Connected” állapotba.
 
-**SDL Process Diagram – Client:**
-
-```plaintext
-Start
- |
- v
-Idle
- | input start
- v
-send(HELLO) / output HELLO
- |
- v
-Wait_ACK
- | input ACK
- v
-Connected
-```
-
-**SDL Process Diagram – Server:**
-
-```plaintext
-Start
- |
- v
-Idle
- | input HELLO
- v
-send(ACK) / output ACK
- |
- v
-Connected
-```
+**SDL Process Diagram – Client and Server:**
+<img width="405" height="662" alt="image" src="https://github.com/user-attachments/assets/95016d25-a2de-421a-8380-9b3967ca9d82" />
 
 ---
 
