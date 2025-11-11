@@ -2,15 +2,16 @@
 
 ## 1. Bevezetés
 
-A **Specification and Description Language (SDL)** egy **formális leíró nyelv**, amelyet a **bonyolult, eseményvezérelt, párhuzamos rendszerek** modellezésére fejlesztettek ki.
-Legfőbb célja, hogy **egyértelmű, vizuálisan is áttekinthető módon** írja le egy rendszer viselkedését, kommunikációját és struktúráját — ezáltal kiküszöbölve a félreértéseket, amelyek gyakran adódnak a természetes nyelvű követelményekből.
+A **Specification and Description Language (SDL)** egy **formális leíró nyelv**, amelyet a komplex, eseményvezérelt, párhuzamos rendszerek egyértelmű, formálisan analizálható, vizuális modellezésére fejlesztettek ki.
 
-A fejlesztés fő indoka az volt, hogy az informális leírásokból (pl. szöveges specifikációk) **könnyen származhatnak hibák és értelmezési eltérések**. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt gyakran **automatikus kódgenerálást** is.
+Vizuálisan modellezi egy rendszer komplex struktúráját, viselkedését, és kommunikációját a környezetével és a belső komponenseivel.
+
+Korábban az informális leírásokban (pl. szöveges specifikációk) **nehezen ellenőrizhető hibák és féreértelmezések** lehettek. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt gyakran **automatikus kódgenerálást** is.
 
 ---
 ## 2. Történeti háttér és szerepe
 
-Az SDL-t az **ITU-T (International Telecommunication Union – Telecommunication Standardization Sector)** fejlesztette ki, eredetileg a **telekommunikációs protokollok** specifikációjára.
+Az SDL-t az **ITU-T (International Telecommunication Union)** fejlesztette ki, eredetileg a **telekommunikációs protokollok** specifikációjára.
 
 * **Első verzió:** 1976 – *Z.100 Recommendation*
 * **Korszerű változat:** SDL-2010
@@ -35,7 +36,7 @@ Az SDL fő jellemzője, hogy **hierarchikusan szervezett** és **gráf-alapú**.
 4. **State** – a folyamat aktuális állapota
 5. **Signal** – az üzenetek, amelyek a folyamatok között cserélődnek
 
-A rendszer **aszinkron üzenetküldéssel** kommunikál, azaz a folyamatok **üzenetdobozokon (input queue)** keresztül kapják a jeleket. Minden folyamat **állapotgép**:
+A rendszer **aszinkron üzenetküldéssel** kommunikál, azaz a folyamatok **postaládákon (input queue)** keresztül kapják a jeleket. Minden folyamat **állapotgép** (FSM):
 
 * adott **állapotban** van,
 * **üzenetet** kap,
