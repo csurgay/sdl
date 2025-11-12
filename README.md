@@ -2,13 +2,15 @@
 
 ## 1. Bevezetés
 
-A **Specification and Description Language (SDL)** egy **formális leíró nyelv**, amelyet a komplex, eseményvezérelt, párhuzamos rendszerek egyértelmű, formálisan analizálható, vizuális modellezésére fejlesztettek ki.
+A **Specification and Description Language (SDL)** egy **véges automata alapú formális leíró nyelv**, amelyet a komplex, eseményvezérelt, párhuzamos rendszerek egyértelmű, formálisan analizálható, vizuális modellezésére fejlesztettek ki.
 
-Vizuálisan modellezi egy rendszer komplex struktúráját, viselkedését, és kommunikációját a környezetével és a belső komponenseivel.
+Vizuálisan modellezi egy rendszer komplex struktúráját, viselkedését, és kommunikációját. A processzek viselkedése véges automatákkal definiált, amik kommunikálhatnak a környezettel, illetve egymással.
 
-Korábban az informális leírásokban (pl. szöveges specifikációk) **nehezen ellenőrizhető hibák és féreértelmezések** lehettek. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt gyakran **automatikus kódgenerálást** is.
+Korábban az informális leírásokban (pl. szöveges specifikációk) **nehezen ellenőrizhető hibák és féreértelmezések** lehettek. Az SDL formális alapjai lehetővé teszik a modell **szimulációját, verifikációját**, sőt **automatikus kódgenerálást** is.
 
-Az SDL egy **CEFSM** (communicating extended finite state machine).
+Az SDL egy **CEFSM** (communicating extended finite state machine). A kommunikáción túli kiterjesztések pl. a változók használata, az elágazások az állapotátmeneteken, illetve az idő modellezése.
+
+A processzek egymással kommunikálhatnak
 
 ---
 ## 2. Történeti háttér
@@ -107,9 +109,9 @@ Az SDL gyakran együtt használatos más ITU-T szabványokkal:
 
 | Eszköz                           | Funkció                            | Kapcsolat SDL-lel                                           |
 | -------------------------------- | ---------------------------------- | ----------------------------------------------------------- |
-| **MSC (Message Sequence Chart)** | Üzenetküldési sorrendek ábrázolása | SDL folyamatok kommunikációjának szemléltetése              |
+| **MSC (Message Sequence Chart)** | Üzenetküldések időbeli ábrázolása | SDL processzek közti kommunikáció szemléltetése              |
 | **ASN.1**                        | Adatszerkezetek formális leírása   | SDL jelek adattartalmát definiálja                          |
-| **TTCN-3**                       | Tesztelési nyelv                   | SDL modellekből generált rendszerek automatizált tesztelése |
+| **TTCN-3**                       | Tesztelési nyelv                   | SDL modellek automatizált tesztelése |
 
 Ezek együtt biztosítják a **model-based development (MBD)** folyamatot.
 
