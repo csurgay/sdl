@@ -10,11 +10,6 @@ Korábban az informális leírásokban (pl. szöveges specifikációk) **nehezen
 
 Az SDL egy **CEFSM** (communicating extended finite state machine). A kommunikáción túli kiterjesztések pl. a változók használata, az elágazások az állapotátmeneteken, illetve az idő modellezése.
 
-A processzek egymással kommunikálhatnak
-
----
-## 2. Történeti háttér
-
 Az SDL-t az **ITU-T (International Telecommunication Union)** fejlesztette ki, eredetileg a **telekommunikációs protokollok** specifikációjára.
 
 * **Első verzió:** 1976 – *Z.100 Recommendation*
@@ -26,6 +21,44 @@ Az SDL-t az **ITU-T (International Telecommunication Union)** fejlesztette ki, e
   * **TTCN-3** – tesztelési nyelv
 
 Az SDL tehát az **ITU formális modellezési ökoszisztéma** része. Ma már széles körben használják nemcsak a távközlésben, hanem **beágyazott rendszerek**, **autóipari vezérlők**, és **IoT rendszerek** tervezésénél is.
+
+---
+## 2. Példa diagrammok
+
+#### Guessing Game - Message Sequence Chart
+<table border="0">
+ <tr>
+    <td><strong>sequencediagram.org MSC</strong></td>
+    <td><strong>sequencediagram.org forráskód</strong></td>
+ </tr>
+ <tr>
+    <td><img width="426" height="901" alt="image" src="https://github.com/user-attachments/assets/5a2798e0-7928-4b0c-8826-78cc48df2859" /></td>
+    <td><pre>
+title Guessing Game
+
+actor Player1
+actor Player2
+participant "Multiple\nAccess" as MA
+rparticipant Game1
+rparticipant Game2
+
+Player1->(1)MA:CALL
+MA-->(1)*Game1:CREATE
+MA->(1)Game1:INIT(caller,n)
+Player2->(1)MA:CALL
+MA-->(1)*Game2:CREATE
+MA->(1)Game2:INIT(caller,n)
+Game1->(1)Player1:PROMPT
+Game2->(1)Player2:PROMPT
+Player1->(1)Game1:GUESS(m)
+Game1->(1)Player1:WIN
+destroyafter Game1
+Player2->(1)Game2:GUESS(m)
+Game2->(1)Player2:LOSE
+destroyafter Game2
+</pre></td>
+ </tr>
+</table>
 
 ---
 ## 3. Az SDL alapfogalmai
