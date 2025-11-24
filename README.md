@@ -25,6 +25,11 @@ Az SDL tehát az **ITU formális modellezési ökoszisztéma** része. Ma már s
 ---
 ## 2. Példa diagrammok
 
+#### Guessing Game - SDL Process Diagram
+
+<img width="500" alt="GuessingGame" src="https://github.com/user-attachments/assets/12681784-9736-4330-b396-596f0e79fa33" />
+
+
 #### Guessing Game - Message Sequence Chart
 <table border="0">
  <tr>
