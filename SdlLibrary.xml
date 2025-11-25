@@ -1,0 +1,58 @@
+<mxlibrary>[
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" parent=\"1\" style=\"shape=stencil(rVRBbsMgEHwN1wqD2pwrmh57yaHnDSE1CgZroUnz+xBj1FDbkd1W4jIzaGeWXUG48DW0ijAKvlUyEP5CGDsCatiaSLOofCWyogmeS3jKsMd1wk89tNCoxGwCYEikD+gO6qR3ob+tba1QdypfE/oc71wPF9JZG2NpZ32h3OixGGgbCq+35NPGoo0KChNLi37ow2PRUK8S9rrE6X2OU+mTfRc6rWc4Vf/itPnF61XjTlxEZmqIXGxBHj7QfdrdaL4WrgsyELLcuKP6TsQWjDNXAJSTBfIG44/9x9wxm+NgtL3JuBq3WBByNdrl3zJK47y6syaRH0yiYyfGx8Xeoboz1702Jv0BUyszKNCx6a/qiAs=);whiteSpace=wrap;html=1;fontSize=17;\" value=\"START\" vertex=\"1\"&gt;&lt;mxGeometry height=\"80\" width=\"150\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "START"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" parent=\"1\" style=\"shape=stencil(rZTNbsMgEISfhmtlg1opx4qmx15yyHlDSI2CwQKan7cvNiCF2lh2W8mXnUHzLd4ViFDbQMcRrsB2nDlE3hDGFzACDtLL2Du3INZVKO95eU1lrJtQv8RSQcuDsnPgYqJ1Rp/5VRxdPC1Uw41wvUu2qHr1Z/qPUKaV8m0JrWzmPPg+DIRyGesjcDof2nLHTVCr7D7V03N2oegi/L6GtF9CyjmJu5K0XUCq/4W0+8Xfq6dJhHqlNERCD8DOn0Z/qeNkfx30CzIykt3qCy/u5+w4UwIYVgxIG2x+2Cb6ZBFBCvXQ42YasaLJzeQt/9Yjk9rymTXx+mgSg1oYH6EnbfjMXE9CyvAGlFZmFDCo4a0ahG8=);whiteSpace=wrap;html=1;fontSize=17;\" value=\"STATE\" vertex=\"1\"&gt;&lt;mxGeometry height=\"80\" width=\"150\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "STATE"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" parent=\"1\" style=\"shape=stencil(rVTLasMwEPwaXYseNJBjUdNjLy30vHE2tbAsGUlN0r+vbNkQ4dg4qUGXmREzu6tFREhfQoOEU/ANFoGIV8L5CZyCvY40j8olkYwm+JvDcw8HXCa86aGBGhPzCb5KnA/OVnhWh9BfVqZEp0Krih2hL/FOe4QsrDGxKmWNz5QrPZqBMiGLek85TTStMaBLLM3aoU/PWT+9SvjbPUlfS5LynCH3zqTdgiS2StLHA9Njt5OEjMzUIwq5h6L6dvbHHG7W10C7ICNhkGt7wskpz3U+GGhlrgwY+7fFNncQK1SxecBjbYdFBoW2HmeWLfKj9+zYiSUQ8mgdzmzHUWmdfpKpxRsZdGz68DriDw==);whiteSpace=wrap;html=1;fontSize=17;\" value=\"INPUT\" vertex=\"1\"&gt;&lt;mxGeometry height=\"80\" width=\"150\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "INPUT"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" parent=\"1\" style=\"shape=stencil(rVTLbsMgEPwarhUGNfeKpsdeWqnnjbOpkTFYQJP274sNlkL8kNP6ODNoZhZWEC5cBS0SRsG1WHrCnwljZ7ASDirQLCjfkSxohD85vCTIEq4i3iWoocHIvIOrI+e8NTVe5NGnw1JXaKXvVL4n9Il0ZpRwURqtQytptMuUKz2YgdQ+i3qNOW0wbdCjTRWzcejDYzZP6kvYyz1JH5NJNE/Kc4bcO5P2K5KKTZLe1sx0c3vFdBIXgZl7RC4OUNaf1nzp42S/FroFGQmD3Jgzzt7y0uSDgZL6yqCg/7e4acE3qLH7g8fWDqsMSmUcLmxb4EcP2rMzW8DFyVhcWI+TVCp+JXObNzLo2fjj9cQv);whiteSpace=wrap;html=1;fontSize=17;\" value=\"OUTPUT\" vertex=\"1\"&gt;&lt;mxGeometry height=\"80\" width=\"150\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "OUTPUT"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" value=\"TASK\" style=\"shape=stencil(rVTLbsMgEPwarhEGNfeIpMdeGinnjbOpkTFYQB79+2JjV0GOLSeyxGVm0Mwuu4Jw4QqokTAKrsbcE74ljF3BSjiqQLOg3COZ0Qh/U3jrYYeLiNcd1FBhZPbgysg5b02JN3ny3WWpC7TSNyrfEboJd5rDRW60DlVJo12iPOjBDKT2SdRXzKmDaYUebWRp0g5dfST9dCphn68kHeYkpTl97otJuxlJ2SJJ32+8XvY8iYvAjA2RiyPk5Y81F316Wl8NzYIMhF6uzBVHX3mq895ASf1g8L/By1ms3/BY2mGWQa6Mw4lNCfxgGC07MkEuzsbixGjPUqn4DYxtzcCgZeNv1RJ/);whiteSpace=wrap;html=1;fontSize=17;points=[[0,0.5,0,0,0],[0.5,0,0,0,0],[0.5,1,0,0,0],[1,0.5,0,0,0]];\" vertex=\"1\" parent=\"1\"&gt;&lt;mxGeometry width=\"150\" height=\"80\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "TASK"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" value=\"CREATE\" style=\"shape=stencil(rVRBbsMgEHwN1wqDEuVa0fTYSyrlTJxNjYzBApq0vy82dhXkGJHEki8zg2Z21wuIMlvxFhDB3LZQOkTfECFnbgQ/SE8Tr/wEssAB/sbwMsIBVwGvB6h4A4H55LYOnHVG13ARRzccFqoCI1yn0i3Cr/5M91FWaqV8VUIrGylXujfjQrko6iPktN60AQcmsDhqB7+son4GFZH3e5L2OUlxzph7Z9I2I6lYJGn3wPSK20mUeWbuJ1J24GX9ZfS3Ot6sr+XdgkyEUW70GWannOp8NJBCXRn8b/ByFusHPJZ2yDJIjXLz/ByyLFI1rMjzReR5lFJbSNwZz0/WsmdndpmykzaQWPKTkDI8iHP3Z2LQs+Hd7ok/);whiteSpace=wrap;html=1;fontSize=17;\" vertex=\"1\" parent=\"1\"&gt;&lt;mxGeometry width=\"150\" height=\"80\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "CREATE"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" value=\"DECISION\" style=\"shape=stencil(rVTLbsMgEPwarpENiaocI5oee2mknDfOpkbGYAFJ2r8vNnYV5IdiK8eZsWYGdg1h3OZQIaEJ2AozR9g7ofQGRsBJepp65SeQSUC/EboHlK5bnAe8baGCEgNzAFsEzjqjC7yLs2s/FipHI1ytsj1JdqQ2TwjjmVbKdxJa2Uh50L0ZCOWiqM+QU3nTEh2aqHB3mNVm6DiEfsxJOj6TFOd0uTOT9k8kpS9J+lpwe+lwEuOeGRsi4yfIim+jr+o82K+CekF6QieX+oZjt7yePHrnIIV6cHgb3O85Dv8/wetabBfUWFIik9rixK54vjeOhh2ZIeMXbXBiuBchZXgIxvamZ9Cw4bVqiD8=);whiteSpace=wrap;html=1;fontSize=17;\" vertex=\"1\" parent=\"1\"&gt;&lt;mxGeometry width=\"200\" height=\"100\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 200,
+    "h": 100,
+    "aspect": "fixed",
+    "title": "DECISION"
+  },
+  {
+    "xml": "&lt;mxGraphModel&gt;&lt;root&gt;&lt;mxCell id=\"0\"/&gt;&lt;mxCell id=\"1\" parent=\"0\"/&gt;&lt;mxCell id=\"2\" value=\"\" style=\"shape=stencil(rVTLTsMwEPwaX1FitxUckSlHLiBxdtMtWdWxI8c08Pc4cSJi4pgUcdwZeWb2IRPGm1LUQGgmmhoKS9gDofQiDIqDdDB1zIcHM199BlXrq3w71KWvb4dSiQo88gKmQiXsoNlYo8/Q4tEOL1CVYNB2LNuT7J50DhlhvNBKuWCoVRMwE96JCVQ28HvyPrUTrcCCCVKPHd1sYz0R+niN0+sap9Bn9L3Sab/CKf8Xp+c/TC+POzHukKUlMn4QxfnN6Hd1jOarRXcgM2KkQUqsG/gOxaIbbcOr/HGkS7Nx+My+RxcyM37SBhLNnFBKf/gJ1186rvRl0u5mF65gYQehhEQ1kcizTaCxu1ujkYyxTiIdI91KfDkjtzjj/tlsST3qv8Ee+AI=);whiteSpace=wrap;html=1;fontSize=17;fillColor=default;\" vertex=\"1\" parent=\"1\"&gt;&lt;mxGeometry width=\"150\" height=\"80\" as=\"geometry\"/&gt;&lt;/mxCell&gt;&lt;/root&gt;&lt;/mxGraphModel&gt;",
+    "w": 150,
+    "h": 80,
+    "aspect": "fixed",
+    "title": "TERMINATE"
+  }
+]</mxlibrary>
