@@ -1,4 +1,5 @@
 Try here: https://csurgay.com/sdl
+Temporalily: https://vasarok.hu/sdl
 
 # **Specification and Description Language (SDL)**
 
