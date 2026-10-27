@@ -1,3 +1,5 @@
+Try here: csurgay.com/sdl
+
 # **Specification and Description Language (SDL)**
 
 ## 1. Bevezetés
