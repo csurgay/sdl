@@ -1,4 +1,4 @@
-Try here: csurgay.com/sdl
+Try here: https://csurgay.com/sdl
 
 # **Specification and Description Language (SDL)**
 
