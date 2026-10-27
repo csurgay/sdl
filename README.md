@@ -2,7 +2,7 @@
 
 ## 1. Bevezetés
 
-A **Specification and Description Language (SDL)** egy **véges automata alapú formális leíró nyelv**, amelyet a komplex, eseményvezérelt, párhuzamos rendszerek egyértelmű, formálisan analizálható, vizuális modellezésére fejlesztettek ki.
+A **Specification and Description Language (SDL)** egy **véges automata alapú formális leíró nyelv**, amelyet a komplex, eseményvezérelt, konkurrens (párhuzamos) rendszerek egyértelmű, formálisan analizálható, vizuális modellezésére fejlesztettek ki.
 
 Vizuálisan modellezi egy rendszer komplex struktúráját, viselkedését, és kommunikációját. A processzek viselkedése véges automatákkal definiált, amik kommunikálhatnak a környezettel, illetve egymással.
 
@@ -21,6 +21,18 @@ Az SDL-t az **ITU-T (International Telecommunication Union)** fejlesztette ki, e
   * **TTCN-3** – tesztelési nyelv
 
 Az SDL tehát az **ITU formális modellezési ökoszisztéma** része. Ma már széles körben használják nemcsak a távközlésben, hanem **beágyazott rendszerek**, **autóipari vezérlők**, és **IoT rendszerek** tervezésénél is.
+
+#### Főbb jellemzők:
+
+* konkurrencia grafikus reprezentációja
+* komplex rendszerekre: block hierarchia fastruktúrában
+* CEFSM: egymással kommunikáló véges automaták, változók, elágazások az állapotátmeneteken, idő
+* formális verifikáció, szimuláció, kódgenerálás
+* széles körben használt, szabványosított
+  * távközlési protokollok
+  * IoT
+  * biztonságkritikus rendszerek
+  * autóipari vezérlők
 
 ---
 ## 2. Példa diagrammok
@@ -119,25 +131,14 @@ Képzeljünk el egy protokollt, ahol:
 <img width="405" height="662" alt="image" src="https://github.com/user-attachments/assets/95016d25-a2de-421a-8380-9b3967ca9d82" />
 
 ---
-## 6. Példa 2 – Valós idejű híváskezelő folyamat
+## 6. Példa 2 – Egyszerű Ping-Pong Protokol
 
-Egy tipikus egyszerűsített **kimenő telefonhívás modell** SDL-ben három állapotot tartalmazhat:
+Egy tipikus egyszerűsített **Ping-Pong** modell sender és receiver folyamata az alábbi SDL process diagramon látható.
 
-1. **Idle** – a vonal szabad
-2. **Ringing** – hívás bejövőben
-3. **Connected** – hívás aktív
+A küldő folyamat kap egy külső kérést üzenetküldésre. A vevő ezt kézbesíti és nyugtázza a küldőnek, aki addig váarakozik.
 
-**Események:**
+<img width="780" height="801" alt="PingPong" src="https://github.com/user-attachments/assets/29ed8a3f-f9b6-494f-9a4f-0646dc54c28c" />
 
-* `call_req` – hívás érkezik
-* `accept` – felhasználó felveszi
-* `hangup` – hívás befejezése
-
-**SDL Process Diagram – CallHandler:**
-
-<img width="491" height="497" alt="image" src="https://github.com/user-attachments/assets/d95a5f39-1834-4585-b3cb-c4dcb4c9abf0" />
-
-E modell könnyen bővíthető új funkciókkal (pl. időzítés, timeout, foglalt állapot), és **szimulálható** különböző SDL eszközökben.
 
 ---
 ## 7. Kapcsolat más formális eszközökkel
@@ -167,14 +168,4 @@ Felhasználás:
 * Beágyazott vezérlők (pl. autóipar, IoT)
 * Biztonságkritikus rendszerek (pl. légiforgalmi kommunikáció)
 
----
-## 9. Összefoglalás
-
-Az SDL egy **szabványos formális nyelv**, amely vizuális, állapotgép-alapú és jól skálázható.
-
-* komplex rendszerek **egyértelmű specifikációja**
-* **szimuláció** és **formális ellenőrzés**
-* **automatikus kódgenerálás**
-* **konzisztens dokumentáció** a fejlesztés teljes életciklusa során
-* pl. **IoT**, **valós idejű és biztonságkritikus rendszerek**, **autóipari vezérlők** fejlesztésében
 
