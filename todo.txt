@@ -1,0 +1,18 @@
+KÉSZ (2026-09)
+- menubar alatt vonal
+- menu popup minden fölé nyílik (overlay réteg)
+- csak a legfelső ablak kap eseményt
+- clipping: teljes újrarajzolás requestAnimationFrame-ben, felső ablakba nem rajzol át semmi
+- class Object -> WNode, class Event -> WEvent (a beépített JS Object/Event-et takarták el)
+- húzás pointer capture-rel (akkor is megy, ha az egér kimegy az ablakból)
+- bezárás / összecsukás gomb, átméretezés, HiDPI, teljes böngészőablak
+- strukturált process editor, auto-layout, undo/redo, mentés/betöltés JSON
+- szimulátor: queue, save, implicit consume, create/stop, timer set/reset
+- processzpéldányok külön ablakban, jelanimáció ablakok között, MSC + export
+
+ÖTLETEK
+- join / label (connector) szimbólum
+- procedure, continuous signal, enabling condition, * állapot
+- system / block diagram csatornákkal, jelútvonal szerinti címzés
+- signal deklarációk ellenőrzése (szintaktikai ellenőrzés futtatás előtt)
+- PNG / SVG export a diagramokról
