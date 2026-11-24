@@ -94,7 +94,8 @@ windowmenu.build=(m)=>{
 };
 
 var helpmenu=mainmenu.addMenu("Help");
-helpmenu.add("SDL Theory…",()=>showTheory(),{key:"F1"});
+helpmenu.add("SDL Theory (English)…",()=>showTheory("en"),{key:"F1",checked:()=>!!(theoryWindow&&theoryWindow.visible&&theoryWindow.view.lang==="en")});
+helpmenu.add("SDL elmélet (magyar)…",()=>showTheory("hu"),{checked:()=>!!(theoryWindow&&theoryWindow.visible&&theoryWindow.view.lang==="hu")});
 helpmenu.add("-");
 helpmenu.add("Usage…",()=>WM.message("Usage",[
 	"EDITOR",

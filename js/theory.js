@@ -1,6 +1,7 @@
 // SDL Design Tool - "SDL Theory" window: the README as a canvas document
 //
-// The text is a small markdown subset (edit SDL_THEORY below to update it):
+// The text is a small markdown subset, in two languages:
+// SDL_THEORY (Hungarian) and SDL_THEORY_EN (English) below - keep the two in step.
 //   # .. ####  headings            **bold**  *italic*  `code`  [text](url)
 //   * / - / 1. lists (2 spaces = one level deeper)
 //   | a | b |  tables (2nd line: |---|---|)     ``` code blocks ```     ---  rule
@@ -186,6 +187,190 @@ Felhasználás:
 Online: [csurgay.com/sdl](https://csurgay.com/sdl)   ·   forráskód: [github.com/csurgay/sdl](https://github.com/csurgay/sdl)
 `;
 
+const SDL_THEORY_EN = `
+# Specification and Description Language (SDL)
+
+## 1. Introduction
+
+The **Specification and Description Language (SDL)** is a **formal description language based on finite state machines**, developed for the unambiguous, formally analysable, visual modelling of complex, event-driven, concurrent (parallel) systems.
+
+It visually models the complex structure, behaviour and communication of a system. The behaviour of the processes is defined by finite state machines, which can communicate with the environment and with each other.
+
+Earlier, informal descriptions (e.g. textual specifications) could contain **errors and misunderstandings that were hard to detect**. The formal foundations of SDL make **simulation and verification** of the model possible, and even **automatic code generation**.
+
+SDL is a **CEFSM** (communicating extended finite state machine). Extensions beyond communication are, for example, the use of variables, branches within transitions, and the modelling of time.
+
+SDL was developed by the **ITU-T (International Telecommunication Union)**, originally for the specification of **telecommunication protocols**.
+
+* **First version:** 1976 – *Z.100 Recommendation*
+* **Current version:** SDL-2010
+* **Related ITU tools:**
+  * **MSC (Message Sequence Charts)** – communication scenarios
+  * **ASN.1** – data description
+  * **TTCN-3** – testing language
+
+SDL is therefore part of the **ITU formal modelling ecosystem**. Today it is widely used not only in telecommunications, but also in the design of **embedded systems**, **automotive controllers** and **IoT systems**.
+
+#### Main features:
+
+* graphical representation of concurrency
+* for complex systems: block hierarchy in a tree structure
+* CEFSM: communicating finite state machines, variables, branches within transitions, time
+* formal verification, simulation, code generation
+* widely used and standardised
+  * telecommunication protocols
+  * IoT
+  * safety-critical systems
+  * automotive controllers
+
+---
+## 2. Example diagrams
+
+#### Guessing Game – SDL Process Diagram
+
+On every **CALL** signal the **Multiple Access (MA)** process creates a new **GAME** process and sends it the caller's identifier and the number of the game.
+
+::diagram Guessing Game MA
+::diagram Guessing Game GAME
+
+#### Guessing Game – Message Sequence Chart
+
+Two players call and both make a guess: the first one wins, the second one loses. The MSC below is drawn by the simulator from a simulation run in the background:
+
+::msc Guessing Game CALL to MA; CALL to MA; GUESS(1) to GAME1; GUESS(1) to GAME2
+
+The **sequencediagram.org** source of the same scenario (the *Export…* button of the Simulator's MSC window saves text like this, too):
+
+\`\`\`
+title Guessing Game
+
+actor Player1
+actor Player2
+participant "Multiple\\nAccess" as MA
+rparticipant Game1
+rparticipant Game2
+
+Player1->(1)MA:CALL
+MA-->(1)*Game1:CREATE
+MA->(1)Game1:INIT(caller,n)
+Player2->(1)MA:CALL
+MA-->(1)*Game2:CREATE
+MA->(1)Game2:INIT(caller,n)
+Game1->(1)Player1:PROMPT
+Game2->(1)Player2:PROMPT
+Player1->(1)Game1:GUESS(m)
+Game1->(1)Player1:WIN
+destroyafter Game1
+Player2->(1)Game2:GUESS(m)
+Game2->(1)Player2:LOSE
+destroyafter Game2
+\`\`\`
+
+---
+## 3. Basic concepts of SDL
+
+The main characteristics of SDL are that it is **hierarchically organised** and **graph-based**.
+
+### Levels of the hierarchy:
+
+1. **System** – the description of the whole system
+2. **Block** – larger functional units
+3. **Process** – active elements that run independently
+4. **State** – the current state of a process
+5. **Signal** – the messages exchanged between the processes
+
+The system communicates by **asynchronous message passing**, i.e. the processes receive the signals through **mailboxes (input queues)**. Every process is a **state machine** (FSM):
+
+* it is in a given **state**,
+* it receives a **message**,
+* it executes a **transition**, during which it **enters a new state** and **may send signals**.
+
+This model describes the **behaviour of real-time systems** very well.
+
+---
+## 4. SDL syntax
+
+SDL models are built from **diagrams**. The main types:
+
+| Diagram type | Meaning |
+|---|---|
+| **System Diagram** | the whole system, blocks and channels |
+| **Block Diagram** | the internal structure of a block (processes and connections) |
+| **Process Diagram** | the behaviour of each process (state machine) |
+
+### Basic graphical elements:
+
+* **State** → the basic concept of the finite state machine: a process is always in a well-defined state (except while it executes a transition)
+* **Input (incoming signal)** → a state can only be left when an Input triggers a transition
+* **Output (outgoing signal)** → the components (processes) send signals to each other with it
+* **Decision** → a conditional branch evaluated during a transition
+* **Task** → an internal operation or calculation, for example assigning values to variables
+
+---
+## 5. Example 1 – A simple client–server handshake in SDL
+
+Imagine a protocol where:
+
+* the **Client** sends a \`HELLO\` signal,
+* the **Server** answers with an \`ACK\` signal,
+* after that the Client goes into the “Connected” state.
+
+**SDL Process Diagram – Client and Server:**
+
+::diagram Handshake Client
+::diagram Handshake Server
+::msc Handshake
+
+---
+## 6. Example 2 – A simple Ping-Pong protocol
+
+The SDL process diagrams below show the sender and receiver processes of a typical simplified **Ping-Pong** model.
+
+The sending process gets an external request to send a message. The receiver delivers it and acknowledges it to the sender, who waits until then.
+
+::diagram Ping Pong Sender
+::diagram Ping Pong Receiver
+::msc Ping Pong PRODUCED; PRODUCED
+
+---
+## 7. Relation to other formal tools
+
+SDL is often used together with other ITU-T standards:
+
+| Tool | Function | Relation to SDL |
+|---|---|---|
+| **MSC (Message Sequence Chart)** | Time-ordered view of message exchanges | Illustrates the communication between SDL processes |
+| **ASN.1** | Formal description of data structures | Defines the data content of SDL signals |
+| **TTCN-3** | Testing language | Automated testing of SDL models |
+
+Together they provide the **model-based development (MBD)** process.
+
+---
+## 8. Tools and practical applications
+
+Some widely used SDL tools:
+
+* **PragmaDev Studio** – modelling, simulation, code generation
+* **Telelogic Tau / IBM Rational SDL Suite** – industrial environment
+* **ObjectGEODE**, **Cinderella SDL** – for education
+
+Applications:
+
+* Telecommunication systems
+* Embedded controllers (e.g. automotive, IoT)
+* Safety-critical systems (e.g. air traffic communication)
+
+---
+Online: [csurgay.com/sdl](https://csurgay.com/sdl)   ·   source code: [github.com/csurgay/sdl](https://github.com/csurgay/sdl)
+`;
+
+// texts drawn by the layout itself
+const TH_STR = {
+	hu:{ title:"SDL elmélet", diagram:"SDL process diagram: ", open:"▶ megnyitás a szerkesztőben", msc:"Message Sequence Chart – ", unknown:"ismeretlen" },
+	en:{ title:"SDL Theory", diagram:"SDL process diagram: ", open:"▶ open in the editor", msc:"Message Sequence Chart – ", unknown:"unknown" },
+};
+const SDL_THEORY_TEXT = { hu:SDL_THEORY, en:SDL_THEORY_EN };
+
 /* ------------------------------------------------------------------ */
 /* parsing                                                              */
 /* ------------------------------------------------------------------ */
@@ -265,9 +450,10 @@ function thFont(r,size=TH.size,bold=false) {
 }
 
 class TheoryLayout {
-	constructor(blocks,width) {
+	constructor(blocks,width,lang="hu") {
 		this.ops=[]; this.links=[]; this.heads=[];
 		this.width=width;
+		this.str=TH_STR[lang]||TH_STR.hu;
 		let y=8;
 		blocks.forEach((b,bi)=>{ y=this.block(b,y,bi); });
 		this.height=y+30;
@@ -359,19 +545,19 @@ class TheoryLayout {
 			}
 			case "diagram": {
 				const ex=theoryExample(b.arg);
-				if (!ex) return this.runs([{text:"(unknown diagram: "+b.arg+")",italic:true}],0,y,W,TH.size,"#c01818");
+				if (!ex) return this.runs([{text:"("+this.str.unknown+": "+b.arg+")",italic:true}],0,y,W,TH.size,"#c01818");
 				const proc=ex.project.processes.find(p=>p.name.toLowerCase()===ex.rest.toLowerCase())||ex.project.processes[0];
 				const lay=layoutProcess(proc);
 				const scale=Math.min(1,W/lay.w);
 				y+=6;
 				this.ops.push({k:"diagram",x:0,y,w:lay.w*scale,h:lay.h*scale,lay,scale});
 				y+=lay.h*scale+2;
-				y=this.runs([{text:"SDL process diagram: "+proc.name+"   ",italic:true},{text:"▶ megnyitás a szerkesztőben",link:"open:"+ex.name}],0,y,W,12,TH.dim,false,18);
+				y=this.runs([{text:this.str.diagram+proc.name+"   ",italic:true},{text:this.str.open,link:"open:"+ex.name}],0,y,W,12,TH.dim,false,18);
 				return y+10;
 			}
 			case "msc": {
 				const ex=theoryExample(b.arg,true);
-				if (!ex) return this.runs([{text:"(unknown MSC: "+b.arg+")",italic:true}],0,y,W,TH.size,"#c01818");
+				if (!ex) return this.runs([{text:"("+this.str.unknown+": "+b.arg+")",italic:true}],0,y,W,TH.size,"#c01818");
 				const sim=theoryRun(ex);
 				const v=new MscView(()=>sim);
 				v.follow=false; v.scrollY=0; v.showStates=true;
@@ -381,7 +567,7 @@ class TheoryLayout {
 				y+=6;
 				this.ops.push({k:"msc",x:0,y,w,h,view:v});
 				y+=h+2;
-				y=this.runs([{text:"Message Sequence Chart – "+ex.name+(ex.script.length?" (env: "+ex.script.join("; ")+")   ":"   "),italic:true},{text:"▶ megnyitás a szerkesztőben",link:"open:"+ex.name}],0,y,W,12,TH.dim,false,18);
+				y=this.runs([{text:this.str.msc+ex.name+(ex.script.length?" (env: "+ex.script.join("; ")+")   ":"   "),italic:true},{text:this.str.open,link:"open:"+ex.name}],0,y,W,12,TH.dim,false,18);
 				return y+10;
 			}
 		}
@@ -418,7 +604,9 @@ class TheoryView extends Area {
 	constructor() {
 		super(0,0,10,10);
 		this.class="TheoryView";
-		this.blocks=TheoryDoc.parse(SDL_THEORY);
+		this.lang="hu";
+		try { if (localStorage.getItem("sdl-theory-lang")==="en") this.lang="en"; } catch(e) {}
+		this.blocks=TheoryDoc.parse(SDL_THEORY_TEXT[this.lang]);
 		this.lay=null;
 		this.scroll=0;
 		this.PAD=26;
@@ -429,7 +617,7 @@ class TheoryView extends Area {
 		const W=this.docWidth();
 		if (!this.lay || this.lay.width!==W) {
 			const ratio=this.lay ? this.scroll/Math.max(1,this.lay.height) : 0;
-			this.lay=new TheoryLayout(this.blocks,W);
+			this.lay=new TheoryLayout(this.blocks,W,this.lang);
 			this.scroll=ratio*this.lay.height;
 		}
 		return this.lay;
@@ -540,6 +728,18 @@ class TheoryView extends Area {
 		}
 		return false;
 	}
+	// switch language and stay at the same section (both texts have the same headings)
+	setLang(lang) {
+		if (lang===this.lang || !SDL_THEORY_TEXT[lang]) return;
+		const hi=this.currentHead(), old=this.relayout();
+		const off=hi>=0 ? this.scroll-old.heads[hi].y : this.scroll;
+		this.lang=lang;
+		try { localStorage.setItem("sdl-theory-lang",lang); } catch(e) {}
+		this.blocks=TheoryDoc.parse(SDL_THEORY_TEXT[lang]);
+		this.lay=null;
+		const lay=this.relayout();
+		this.scrollTo(hi>=0 && lay.heads[hi] ? lay.heads[hi].y+Math.max(0,off) : off);
+	}
 	currentHead() {
 		const lay=this.relayout();
 		let cur=-1;
@@ -554,6 +754,8 @@ class TheoryWindow extends Window {
 		this.class="TheoryWindow";
 		this.TOCW=220;
 		this.view=this.push(new TheoryView());
+		this.title=()=>TH_STR[this.view.lang].title;
+		this.langBtns=[["en","English"],["hu","Magyar"]].map(([l,cap])=>this.push(new Button(cap,0,0,0,24,()=>this.setLang(l),{toggled:()=>this.view.lang===l,tooltip:l==="en"?"SDL Theory in English":"SDL elmélet magyarul"})));
 		this.toc=this.push(new ListView(0,0,10,10,{
 			items:()=>this.view.relayout().heads.map((h,i)=>({ text:"   ".repeat(Math.max(0,h.level-2))+h.text, data:h, font:h.level<=2?THEME.fontBold:THEME.font, color:h.level===1?THEME.titleActive:THEME.text })).filter(it=>it.data.level<=3),
 			onSelect:(it)=>this.view.scrollTo(it.data.y),
@@ -562,6 +764,7 @@ class TheoryWindow extends Window {
 		this.view.onScroll=()=>this.syncToc();
 		this.layout();
 	}
+	setLang(l) { this.view.setLang(l); this.syncToc(); invalidate(); }
 	syncToc() {
 		if (!this.toc) return;
 		const heads=this.view.relayout().heads.filter(h=>h.level<=3);
@@ -573,20 +776,26 @@ class TheoryWindow extends Window {
 		const W=this.clientArea.w, H=this.clientArea.h;
 		const tocW=W>760?this.TOCW:0;
 		this.toc.visible=tocW>0;
-		this.toc.set(0,0,tocW,H);
-		this.view.set(tocW,0,W-tocW,H);
+		// language switch: above the contents, or in the top right corner without it
+		const bw=Math.round(((tocW||200)-12)/2);
+		this.langBtns.forEach((b,i)=>{ b.w=bw; b.x=tocW ? 4+i*(bw+4) : W-24-(2-i)*(bw+4); b.y=4; });
+		const top=tocW?32:0;
+		this.toc.set(0,top,tocW,H-top);
+		this.view.set(tocW,top?0:32,W-tocW,top?H:H-32);
+		if (!tocW) this.clientArea.push(this.langBtns[0]), this.clientArea.push(this.langBtns[1]);
 	}
 	onKey(k) { return this.view.onKey(k); }
 }
 
 var theoryWindow=null;
-function showTheory() {
+function showTheory(lang) {
 	if (!theoryWindow) {
 		const ca=WM.root.clientArea;
 		const w=Math.min(1120,ca.w-60), h=ca.h-40;
 		theoryWindow=new TheoryWindow(new Rect(Math.round((ca.w-w)/2),20,w,h));
 		ca.push(theoryWindow);
 	}
+	if (lang) theoryWindow.setLang(lang);
 	theoryWindow.show();
 	theoryWindow.syncToc();
 }
