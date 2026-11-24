@@ -993,6 +993,11 @@ const WM = {
 		d.push(new Label(ptext,12,12,pw-24,18));
 		d.push(new Button("Yes",pw-160,h-ddhead-34,68,24,()=>{ d.close(); pcallback(); }));
 		d.push(new Button("No",pw-84,h-ddhead-34,72,24,()=>d.close()));
+		d.onKey=(k)=>{
+			if (k.key==="Enter") { d.close(); pcallback(); return true; }
+			if (k.key==="Escape") { d.close(); return true; }
+			return false;
+		};
 		this.showDialog(d);
 		return d;
 	},

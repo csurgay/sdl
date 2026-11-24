@@ -370,11 +370,26 @@ function exampleDiningPhilosophers(fixed=false) {
 		}),
 	]};
 }
+// client-server handshake (README, example 1)
+function exampleHandshake() {
+	const {O,N}=SdlBuild;
+	return { format:"sdl-tool/1", name:"Handshake", processes:[
+		SdlBuild.proc("Client",1,"",[O("HELLO\nto Server"),N("WaitAck")],{
+			WaitAck:[{input:"ACK",steps:[N("Connected")]}],
+			Connected:[],
+		}),
+		SdlBuild.proc("Server",1,"",[N("Listening")],{
+			Listening:[{input:"HELLO",steps:[O("ACK\nto sender"),N("Connected")]}],
+			Connected:[],
+		}),
+	]};
+}
 const EXAMPLES = [
 	{ name:"Dining Philosophers (deadlock)", make:()=>exampleDiningPhilosophers(false) },
 	{ name:"Dining Philosophers (fixed)", make:()=>exampleDiningPhilosophers(true) },
 	{ name:"Guessing Game", make:exampleGuessingGame },
 	{ name:"Ping Pong", make:examplePingPong },
+	{ name:"Handshake (client-server)", make:exampleHandshake },
 	{ name:"Semaphore (timer)", make:exampleSemaphore },
 ];
 

@@ -94,6 +94,8 @@ windowmenu.build=(m)=>{
 };
 
 var helpmenu=mainmenu.addMenu("Help");
+helpmenu.add("SDL Theory…",()=>showTheory(),{key:"F1"});
+helpmenu.add("-");
 helpmenu.add("Usage…",()=>WM.message("Usage",[
 	"EDITOR",
 	"  drag a symbol from Symbols onto a diagram symbol: inserted after it",
@@ -124,6 +126,7 @@ WM.addKey("z",()=>Model.redo(),true,true);
 WM.addKey("s",()=>saveFile(),true);
 WM.addKey("o",()=>openFile(),true);
 WM.addKey("F8",()=>SimCtl.run());
+WM.addKey("F1",()=>showTheory());
 WM.addKey("F9",()=>SimCtl.reset());
 WM.addKey("F10",()=>SimCtl.step());
 WM.addKey("F10",()=>SimCtl.stepTransition(),false,true);

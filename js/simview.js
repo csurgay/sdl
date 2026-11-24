@@ -317,16 +317,17 @@ class SimWindow extends Window {
 /* Message Sequence Chart built from the simulation trace               */
 /* ------------------------------------------------------------------ */
 class MscView extends Area {
-	constructor() {
+	constructor(psimFn) {
 		super(0,0,10,10);
 		this.class="MscView";
+		this.simFn=psimFn||(()=>SimCtl.sim);   // the theory window draws its own simulation
 		this.scrollY=0; this.scrollX=0;
 		this.follow=true;
 		this.showStates=true;
 		this.COLW=118; this.ROWH=24; this.X0=16; this.HEAD=34;
 	}
 	build() {
-		const trace=SimCtl.sim.trace;
+		const trace=this.simFn().trace;
 		const cols=["env"], colOf=new Map([["env",0]]);
 		const head=new Map([["env",-1]]), end=new Map();
 		const rows=[];
@@ -440,7 +441,7 @@ class MscView extends Area {
 			c.roundRect(x-w/2,y,w,24,pid==="env"?12:2,pid==="env"?"#f3f3f3":"#eef4fb",pid==="env"?"#8a9099":"#3b6ea5");
 			c.fitText(pid,x,y+12.5,w-8,"center",THEME.text,THEME.fontBold);
 		});
-		if (!SimCtl.started()) c.fillText("Start the simulation (Simulator window) to see the MSC",this.ax+10,this.ay+this.h-14,"left",THEME.textDim);
+		if (!this.simFn().trace.length) c.fillText("Start the simulation (Simulator window) to see the MSC",this.ax+10,this.ay+this.h-14,"left",THEME.textDim);
 	}
 	arrowHead(x,y,dir,color="#1d2126") {
 		ctx.save(); ctx.fillStyle=color; ctx.beginPath();
