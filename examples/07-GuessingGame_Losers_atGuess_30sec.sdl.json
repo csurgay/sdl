@@ -1,0 +1,261 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Guessing Game: Losers atGuess 30sec",
+ "processes": [
+  {
+   "name": "MA",
+   "init": 1,
+   "dcl": "n",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "n := 0",
+       "id": "n388"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "IDLE",
+      "id": "n389"
+     }
+    },
+    "id": "n387"
+   },
+   "states": [
+    {
+     "name": "IDLE",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "CALLIN",
+       "trans": {
+        "actions": [
+         {
+          "type": "create",
+          "text": "GAME",
+          "id": "n392"
+         },
+         {
+          "type": "output",
+          "text": "INIT(sender)\nto offspring",
+          "id": "n394"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "IDLE",
+         "id": "n395"
+        }
+       },
+       "id": "n391"
+      },
+      {
+       "id": "n415",
+       "type": "input",
+       "text": "REQ",
+       "trans": {
+        "actions": [
+         {
+          "id": "n417",
+          "type": "output",
+          "text": "RESP(n) to sender"
+         }
+        ],
+        "term": {
+         "id": "n416",
+         "type": "nextstate",
+         "text": "IDLE"
+        }
+       }
+      },
+      {
+       "id": "n412",
+       "type": "input",
+       "text": "LOSER",
+       "trans": {
+        "actions": [
+         {
+          "id": "n414",
+          "type": "task",
+          "text": "n:=n+1"
+         }
+        ],
+        "term": {
+         "id": "n413",
+         "type": "nextstate",
+         "text": "IDLE"
+        }
+       }
+      }
+     ],
+     "id": "n390"
+    }
+   ],
+   "id": "n386"
+  },
+  {
+   "name": "GAME",
+   "init": 0,
+   "dcl": "player, n, m",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "IDLE",
+      "id": "n398"
+     }
+    },
+    "id": "n397"
+   },
+   "states": [
+    {
+     "name": "IDLE",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "INIT(player)",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "PROMPT\nto player",
+          "id": "n401"
+         },
+         {
+          "id": "n418",
+          "type": "task",
+          "text": "set(now+30, TIMEOUT)"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "WAIT",
+         "id": "n402"
+        }
+       },
+       "id": "n400"
+      }
+     ],
+     "id": "n399"
+    },
+    {
+     "name": "WAIT",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "GUESS(m)",
+       "trans": {
+        "actions": [
+         {
+          "id": "n424",
+          "type": "output",
+          "text": "REQ to PARENT"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "EEE",
+         "id": "n408"
+        }
+       },
+       "id": "n404"
+      },
+      {
+       "id": "n419",
+       "type": "input",
+       "text": "TIMEOUT",
+       "trans": {
+        "actions": [
+         {
+          "id": "n421",
+          "type": "output",
+          "text": "LOSER to parent"
+         },
+         {
+          "id": "n422",
+          "type": "output",
+          "text": "LOSER to PLAYER"
+         }
+        ],
+        "term": {
+         "id": "n420",
+         "type": "stop",
+         "text": "-"
+        }
+       }
+      }
+     ],
+     "id": "n403"
+    },
+    {
+     "id": "n425",
+     "name": "EEE",
+     "inputs": [
+      {
+       "id": "n426",
+       "type": "input",
+       "text": "RESP(m)",
+       "trans": {
+        "actions": [
+         {
+          "id": "n428",
+          "type": "decision",
+          "text": "n==m",
+          "branches": [
+           {
+            "id": "n429",
+            "answer": "true",
+            "trans": {
+             "actions": [
+              {
+               "id": "n434",
+               "type": "output",
+               "text": "WINNER to PLAYER"
+              }
+             ],
+             "term": {
+              "id": "n427",
+              "type": "stop",
+              "text": "-"
+             }
+            }
+           },
+           {
+            "id": "n430",
+            "answer": "false",
+            "trans": {
+             "actions": [
+              {
+               "id": "n432",
+               "type": "output",
+               "text": "LOSER to parent"
+              },
+              {
+               "id": "n433",
+               "type": "output",
+               "text": "LOSER to PLAYER"
+              }
+             ],
+             "term": {
+              "id": "n431",
+              "type": "stop",
+              "text": "-"
+             }
+            }
+           }
+          ]
+         }
+        ],
+        "term": null
+       }
+      }
+     ]
+    }
+   ],
+   "id": "n396"
+  }
+ ]
+}
