@@ -30,17 +30,25 @@ var mainmenu=new MenuBar();
 workspace.addMenu(mainmenu);
 
 var filemenu=mainmenu.addMenu("File");
-filemenu.add("New project",()=>WM.confirm("New project","Discard the current project and start a new one?",()=>{
-	loadProject({format:"sdl-tool/1",name:"Untitled",processes:[]});
-	const p=Model.edit("newproc",()=>Model.newProcess("Process"));
-	Editors.open(p);
-}));
-filemenu.add("Open…",()=>openFile(),{key:"Ctrl+O"});
-filemenu.add("Save",()=>saveFile(),{key:"Ctrl+S"});
-filemenu.add("-");
-EXAMPLES.forEach(ex=>filemenu.add("Example: "+ex.name,()=>loadProject(ex.make())));
-filemenu.add("-");
-filemenu.add("Export MSC (sequencediagram.org)…",()=>exportMsc());
+// built every time the menu opens: the examples come from the examples/ folder
+filemenu.build=(m)=>{
+	m.add("New project",()=>WM.confirm("New project","Discard the current project and start a new one?",()=>{
+		loadProject({format:"sdl-tool/1",name:"Untitled",processes:[]});
+		const p=Model.edit("newproc",()=>Model.newProcess("Process"));
+		Editors.open(p);
+	}));
+	m.add("Open…",()=>openFile(),{key:"Ctrl+O"});
+	m.add("Save",()=>saveFile(),{key:"Ctrl+S"});
+	m.add("-");
+	if (!Examples.loaded) m.add("Examples: loading…",null,{enabled:()=>false});
+	else if (!Examples.list.length) m.add("Examples: "+Examples.error,null,{enabled:()=>false});
+	else Examples.list.forEach(ex=>m.add("Example: "+ex.name,()=>{
+		try { loadProject(Examples.make(ex)); } catch(e) { WM.message("Example",ex.file+":\n"+e.message); }
+	}));
+	m.add("Reload examples",()=>{ Examples.loaded=false; Examples.load().then(()=>invalidate()); });
+	m.add("-");
+	m.add("Export MSC (sequencediagram.org)…",()=>exportMsc());
+};
 
 var editmenu=mainmenu.addMenu("Edit");
 editmenu.add("Undo",()=>Model.undo(),{key:"Ctrl+Z",enabled:()=>Model.undoStack.length>0});
@@ -98,6 +106,12 @@ helpmenu.add("SDL Theory (English)…",()=>showTheory("en"),{key:"F1",checked:()
 helpmenu.add("SDL elmélet (magyar)…",()=>showTheory("hu"),{checked:()=>!!(theoryWindow&&theoryWindow.visible&&theoryWindow.view.lang==="hu")});
 helpmenu.add("-");
 helpmenu.add("Usage…",()=>WM.message("Usage",[
+	"EXAMPLES",
+	"  File / Example: every *.sdl.json file of the examples/ folder",
+	"  add one: File / Save, copy the file into examples/, then run",
+	"  node tools/examples-index.js  (or File / Reload examples on a server",
+	"  with folder listing);  remove a file to hide that example",
+	"",
 	"EDITOR",
 	"  drag a symbol from Symbols onto a diagram symbol: inserted after it",
 	"  or select a diagram symbol and click a palette symbol",
@@ -196,11 +210,16 @@ Model.listeners.push((what)=>{
 (function start() {
 	let p=null;
 	try { const s=localStorage.getItem("sdl-tool-project"); if (s) p=Model.fromJSON(s); } catch(e) { p=null; }
-	Model.load(p||exampleGuessingGame());
+	Model.load(p||{format:"sdl-tool/1",name:"Untitled",processes:[]});
 	SimCtl.init();
 	SimCtl.win=simWindow; SimCtl.msc=mscWindow;
 	Model.project.processes.forEach(pr=>Editors.open(pr));
 	arrangeDefault();
 	SimCtl.reset();
 	projectWindow.activate();
+	// first start (nothing saved in the browser): open the first example of examples/
+	Examples.load().then(()=>{
+		if (!p && !Model.project.processes.length && Examples.list.length) loadProject(Examples.make(Examples.list[0]));
+		invalidate();
+	});
 })();

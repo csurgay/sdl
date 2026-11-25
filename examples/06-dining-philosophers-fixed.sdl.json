@@ -1,0 +1,380 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Dining Philosophers (fixed)",
+ "processes": [
+  {
+   "name": "Asztal",
+   "init": 1,
+   "dcl": "i, n := 5",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "i := 0",
+       "id": "n3"
+      },
+      {
+       "type": "output",
+       "text": "KOVETKEZO to self",
+       "id": "n4"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "Teritek",
+      "id": "n5"
+     }
+    },
+    "id": "n2"
+   },
+   "states": [
+    {
+     "name": "Teritek",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "KOVETKEZO",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "i++",
+          "id": "n8"
+         },
+         {
+          "type": "create",
+          "text": "Villa",
+          "id": "n9"
+         },
+         {
+          "type": "create",
+          "text": "Filozof",
+          "id": "n10"
+         },
+         {
+          "type": "output",
+          "text": "INIT(i, n)\nto offspring",
+          "id": "n11"
+         },
+         {
+          "type": "decision",
+          "text": "i < n ?",
+          "branches": [
+           {
+            "answer": "true",
+            "trans": {
+             "actions": [
+              {
+               "type": "output",
+               "text": "KOVETKEZO to self",
+               "id": "n14"
+              }
+             ],
+             "term": {
+              "type": "nextstate",
+              "text": "-",
+              "id": "n15"
+             }
+            },
+            "id": "n13"
+           },
+           {
+            "answer": "false",
+            "trans": {
+             "actions": [],
+             "term": {
+              "type": "nextstate",
+              "text": "Vacsora",
+              "id": "n17"
+             }
+            },
+            "id": "n16"
+           }
+          ],
+          "id": "n12"
+         }
+        ],
+        "term": null
+       },
+       "id": "n7"
+      }
+     ],
+     "id": "n6"
+    },
+    {
+     "name": "Vacsora",
+     "inputs": [],
+     "id": "n18"
+    }
+   ],
+   "id": "n1"
+  },
+  {
+   "name": "Filozof",
+   "init": 0,
+   "dcl": "en, n, bal, jobb, etkezes, tmp",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "Ul",
+      "id": "n21"
+     }
+    },
+    "id": "n20"
+   },
+   "states": [
+    {
+     "name": "Ul",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "INIT(en, n)",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "bal := 'Villa' + en;\njobb := 'Villa' + (en mod n + 1);\netkezes := 0",
+          "id": "n24"
+         },
+         {
+          "type": "decision",
+          "text": "en = n ?",
+          "branches": [
+           {
+            "answer": "true",
+            "trans": {
+             "actions": [
+              {
+               "type": "task",
+               "text": "tmp := bal; bal := jobb; jobb := tmp",
+               "id": "n27"
+              },
+              {
+               "type": "task",
+               "text": "set(now+1, EHES)",
+               "id": "n28"
+              }
+             ],
+             "term": {
+              "type": "nextstate",
+              "text": "Gondolkodik",
+              "id": "n29"
+             }
+            },
+            "id": "n26"
+           },
+           {
+            "answer": "false",
+            "trans": {
+             "actions": [
+              {
+               "type": "task",
+               "text": "set(now+1, EHES)",
+               "id": "n31"
+              }
+             ],
+             "term": {
+              "type": "nextstate",
+              "text": "Gondolkodik",
+              "id": "n32"
+             }
+            },
+            "id": "n30"
+           }
+          ],
+          "id": "n25"
+         }
+        ],
+        "term": null
+       },
+       "id": "n23"
+      }
+     ],
+     "id": "n22"
+    },
+    {
+     "name": "Gondolkodik",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "EHES",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "KER to bal",
+          "id": "n35"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "VarBal",
+         "id": "n36"
+        }
+       },
+       "id": "n34"
+      }
+     ],
+     "id": "n33"
+    },
+    {
+     "name": "VarBal",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "KAPOD",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "KER to jobb",
+          "id": "n39"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "VarJobb",
+         "id": "n40"
+        }
+       },
+       "id": "n38"
+      }
+     ],
+     "id": "n37"
+    },
+    {
+     "name": "VarJobb",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "KAPOD",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "etkezes++;\nset(now+random(2,4), JOLLAKOTT)",
+          "id": "n43"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "Eszik",
+         "id": "n44"
+        }
+       },
+       "id": "n42"
+      }
+     ],
+     "id": "n41"
+    },
+    {
+     "name": "Eszik",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "JOLLAKOTT",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "VISSZA to bal",
+          "id": "n47"
+         },
+         {
+          "type": "output",
+          "text": "VISSZA to jobb",
+          "id": "n48"
+         },
+         {
+          "type": "task",
+          "text": "set(now+random(1,5), EHES)",
+          "id": "n49"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "Gondolkodik",
+         "id": "n50"
+        }
+       },
+       "id": "n46"
+      }
+     ],
+     "id": "n45"
+    }
+   ],
+   "id": "n19"
+  },
+  {
+   "name": "Villa",
+   "init": 0,
+   "dcl": "",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "Szabad",
+      "id": "n53"
+     }
+    },
+    "id": "n52"
+   },
+   "states": [
+    {
+     "name": "Szabad",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "KER",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "KAPOD to sender",
+          "id": "n56"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "Foglalt",
+         "id": "n57"
+        }
+       },
+       "id": "n55"
+      }
+     ],
+     "id": "n54"
+    },
+    {
+     "name": "Foglalt",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "VISSZA",
+       "trans": {
+        "actions": [],
+        "term": {
+         "type": "nextstate",
+         "text": "Szabad",
+         "id": "n60"
+        }
+       },
+       "id": "n59"
+      },
+      {
+       "type": "save",
+       "text": "KER",
+       "id": "n61"
+      }
+     ],
+     "id": "n58"
+    }
+   ],
+   "id": "n51"
+  }
+ ]
+}

@@ -1,0 +1,8 @@
+[
+ "01-guessing-game.sdl.json",
+ "02-ping-pong.sdl.json",
+ "03-handshake.sdl.json",
+ "04-semaphore.sdl.json",
+ "05-dining-philosophers-deadlock.sdl.json",
+ "06-dining-philosophers-fixed.sdl.json"
+]

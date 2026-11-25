@@ -1,0 +1,169 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Guessing Game",
+ "processes": [
+  {
+   "name": "MA",
+   "init": 1,
+   "dcl": "n",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "n := 0",
+       "id": "n3"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "IDLE",
+      "id": "n4"
+     }
+    },
+    "id": "n2"
+   },
+   "states": [
+    {
+     "name": "IDLE",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "CALL",
+       "trans": {
+        "actions": [
+         {
+          "type": "create",
+          "text": "GAME",
+          "id": "n7"
+         },
+         {
+          "type": "task",
+          "text": "n++",
+          "id": "n8"
+         },
+         {
+          "type": "output",
+          "text": "INIT(sender, n)\nto offspring",
+          "id": "n9"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "IDLE",
+         "id": "n10"
+        }
+       },
+       "id": "n6"
+      }
+     ],
+     "id": "n5"
+    }
+   ],
+   "id": "n1"
+  },
+  {
+   "name": "GAME",
+   "init": 0,
+   "dcl": "player, n, m",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "IDLE",
+      "id": "n13"
+     }
+    },
+    "id": "n12"
+   },
+   "states": [
+    {
+     "name": "IDLE",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "INIT(player, n)",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "PROMPT\nto player",
+          "id": "n16"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "WAIT",
+         "id": "n17"
+        }
+       },
+       "id": "n15"
+      }
+     ],
+     "id": "n14"
+    },
+    {
+     "name": "WAIT",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "GUESS(m)",
+       "trans": {
+        "actions": [
+         {
+          "type": "decision",
+          "text": "n = m ?",
+          "branches": [
+           {
+            "answer": "true",
+            "trans": {
+             "actions": [
+              {
+               "type": "output",
+               "text": "WINNER\nto player",
+               "id": "n22"
+              }
+             ],
+             "term": {
+              "type": "stop",
+              "text": "",
+              "id": "n23"
+             }
+            },
+            "id": "n21"
+           },
+           {
+            "answer": "false",
+            "trans": {
+             "actions": [
+              {
+               "type": "output",
+               "text": "LOSER\nto player",
+               "id": "n25"
+              }
+             ],
+             "term": {
+              "type": "stop",
+              "text": "",
+              "id": "n26"
+             }
+            },
+            "id": "n24"
+           }
+          ],
+          "id": "n20"
+         }
+        ],
+        "term": null
+       },
+       "id": "n19"
+      }
+     ],
+     "id": "n18"
+    }
+   ],
+   "id": "n11"
+  }
+ ]
+}

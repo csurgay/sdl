@@ -579,7 +579,7 @@ class TheoryLayout {
 function theoryExample(arg,withScript=false) {
 	const norm=(s)=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
 	let best=null;
-	EXAMPLES.forEach(ex=>{
+	BUILTIN_EXAMPLES.forEach(ex=>{
 		const base=ex.name.replace(/\s*\(.*\)\s*$/,"");
 		if (arg.toLowerCase().startsWith(base.toLowerCase()) && (!best || base.length>best.base.length)) best={ex,base};
 	});
@@ -710,7 +710,7 @@ class TheoryView extends Area {
 	follow(href) {
 		if (href.startsWith("open:")) {
 			const name=href.slice(5);
-			const ex=EXAMPLES.find(e=>e.name===name);
+			const ex=BUILTIN_EXAMPLES.find(e=>e.name===name);
 			if (ex) WM.confirm("Open example","Replace the current project with \""+name+"\"?",()=>loadProject(ex.make()),440);
 			return;
 		}

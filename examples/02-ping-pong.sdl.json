@@ -1,0 +1,134 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Ping Pong",
+ "processes": [
+  {
+   "name": "Sender",
+   "init": 1,
+   "dcl": "count",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "count := 0",
+       "id": "n3"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "READY",
+      "id": "n4"
+     }
+    },
+    "id": "n2"
+   },
+   "states": [
+    {
+     "name": "READY",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "PRODUCED",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "count++",
+          "id": "n7"
+         },
+         {
+          "type": "output",
+          "text": "MSG(count)",
+          "id": "n8"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "WAIT_ACK",
+         "id": "n9"
+        }
+       },
+       "id": "n6"
+      }
+     ],
+     "id": "n5"
+    },
+    {
+     "name": "WAIT_ACK",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "ACK",
+       "trans": {
+        "actions": [],
+        "term": {
+         "type": "nextstate",
+         "text": "READY",
+         "id": "n12"
+        }
+       },
+       "id": "n11"
+      },
+      {
+       "type": "save",
+       "text": "PRODUCED",
+       "id": "n13"
+      }
+     ],
+     "id": "n10"
+    }
+   ],
+   "id": "n1"
+  },
+  {
+   "name": "Receiver",
+   "init": 1,
+   "dcl": "k",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "READY2",
+      "id": "n16"
+     }
+    },
+    "id": "n15"
+   },
+   "states": [
+    {
+     "name": "READY2",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "MSG(k)",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "OUTPUT(k)\nto env",
+          "id": "n19"
+         },
+         {
+          "type": "output",
+          "text": "ACK\nto sender",
+          "id": "n20"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "READY2",
+         "id": "n21"
+        }
+       },
+       "id": "n18"
+      }
+     ],
+     "id": "n17"
+    }
+   ],
+   "id": "n14"
+  }
+ ]
+}

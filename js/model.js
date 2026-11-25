@@ -384,7 +384,10 @@ function exampleHandshake() {
 		}),
 	]};
 }
-const EXAMPLES = [
+// Built-in models. Only the "SDL Theory" window uses them (its live diagrams and MSCs),
+// so they keep working when files are removed from examples/ (e.g. during an exam).
+// The File menu examples are the *.sdl.json files of the examples/ folder (see Examples below).
+const BUILTIN_EXAMPLES = [
 	{ name:"Dining Philosophers (deadlock)", make:()=>exampleDiningPhilosophers(false) },
 	{ name:"Dining Philosophers (fixed)", make:()=>exampleDiningPhilosophers(true) },
 	{ name:"Guessing Game", make:exampleGuessingGame },
@@ -393,4 +396,51 @@ const EXAMPLES = [
 	{ name:"Semaphore (timer)", make:exampleSemaphore },
 ];
 
-if (typeof module!=="undefined") module.exports={ Model, SdlBuild, EXAMPLES, exampleGuessingGame, examplePingPong, exampleSemaphore };
+/* ------------------------------------------------------------------ */
+/* examples: every *.sdl.json file in the examples/ directory          */
+/* ------------------------------------------------------------------ */
+// The file list comes from examples/index.json (regenerate it with
+//      node tools/examples-index.js
+// after adding or removing a file) and, if the web server shows directory
+// listings (python -m http.server, VS Code Live Server, Apache), also from the
+// listing itself - so a file just dropped in is found too.
+// The menu is ordered by file name; the menu text is the "name" of the project.
+// A browser cannot read a folder from file://, so open the tool through a web server.
+const Examples = {
+	dir:"examples/",
+	list:[],          // { file, name, text }
+	loaded:false,
+	error:"",
+	async load() {
+		let names=[];
+		try {
+			const r=await fetch(this.dir+"index.json",{cache:"no-cache"});
+			if (r.ok) { const j=await r.json(); if (Array.isArray(j)) names.push(...j.map(String)); }
+		} catch(e) {}
+		try {
+			const r=await fetch(this.dir,{cache:"no-cache"});
+			if (r.ok) {
+				const html=await r.text();
+				for (const m of html.matchAll(/href\s*=\s*["']([^"'?#]+\.sdl\.json)["']/gi)) names.push(decodeURIComponent(m[1].split("/").pop()));
+			}
+		} catch(e) {}
+		names=[...new Set(names.filter(n=>/\.sdl\.json$/i.test(n)))].sort((a,b)=>a.localeCompare(b));
+		const got=await Promise.all(names.map(async file=>{
+			try {
+				const r=await fetch(this.dir+encodeURIComponent(file),{cache:"no-cache"});
+				if (!r.ok) return null;          // listed in index.json, but removed from the folder
+				const text=await r.text();
+				const p=Model.fromJSON(text);
+				return { file, name:(p.name||file.replace(/\.sdl\.json$/i,"")).trim(), text };
+			} catch(e) { console.warn("example "+file+": "+e.message); return null; }
+		}));
+		this.list=got.filter(Boolean);
+		this.error=this.list.length ? "" : location.protocol==="file:" ? "open the tool through a web server to see the examples" : "no *.sdl.json files in "+this.dir;
+		this.loaded=true;
+		return this.list;
+	},
+	// a fresh copy every time
+	make(ex) { return Model.fromJSON(ex.text); },
+};
+
+if (typeof module!=="undefined") module.exports={ Model, SdlBuild, BUILTIN_EXAMPLES, Examples, exampleGuessingGame, examplePingPong, exampleSemaphore };

@@ -1,0 +1,104 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Handshake",
+ "processes": [
+  {
+   "name": "Client",
+   "init": 1,
+   "dcl": "",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "output",
+       "text": "HELLO\nto Server",
+       "id": "n3"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "WaitAck",
+      "id": "n4"
+     }
+    },
+    "id": "n2"
+   },
+   "states": [
+    {
+     "name": "WaitAck",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "ACK",
+       "trans": {
+        "actions": [],
+        "term": {
+         "type": "nextstate",
+         "text": "Connected",
+         "id": "n7"
+        }
+       },
+       "id": "n6"
+      }
+     ],
+     "id": "n5"
+    },
+    {
+     "name": "Connected",
+     "inputs": [],
+     "id": "n8"
+    }
+   ],
+   "id": "n1"
+  },
+  {
+   "name": "Server",
+   "init": 1,
+   "dcl": "",
+   "start": {
+    "trans": {
+     "actions": [],
+     "term": {
+      "type": "nextstate",
+      "text": "Listening",
+      "id": "n11"
+     }
+    },
+    "id": "n10"
+   },
+   "states": [
+    {
+     "name": "Listening",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "HELLO",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "ACK\nto sender",
+          "id": "n14"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "Connected",
+         "id": "n15"
+        }
+       },
+       "id": "n13"
+      }
+     ],
+     "id": "n12"
+    },
+    {
+     "name": "Connected",
+     "inputs": [],
+     "id": "n16"
+    }
+   ],
+   "id": "n9"
+  }
+ ]
+}

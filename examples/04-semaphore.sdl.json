@@ -1,0 +1,220 @@
+{
+ "format": "sdl-tool/1",
+ "name": "Semaphore",
+ "processes": [
+  {
+   "name": "Semaphore",
+   "init": 1,
+   "dcl": "n",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "n := 0",
+       "id": "n3"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "Tilos",
+      "id": "n4"
+     }
+    },
+    "id": "n2"
+   },
+   "states": [
+    {
+     "name": "Tilos",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "Nami",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "Tilos\nto sender",
+          "id": "n7"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "-",
+         "id": "n8"
+        }
+       },
+       "id": "n6"
+      },
+      {
+       "type": "input",
+       "text": "Kurbli",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "set(now+10, Lejart)",
+          "id": "n10"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "Szabad",
+         "id": "n11"
+        }
+       },
+       "id": "n9"
+      }
+     ],
+     "id": "n5"
+    },
+    {
+     "name": "Szabad",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "Nami",
+       "trans": {
+        "actions": [
+         {
+          "type": "output",
+          "text": "Szabad\nto sender",
+          "id": "n14"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "-",
+         "id": "n15"
+        }
+       },
+       "id": "n13"
+      },
+      {
+       "type": "input",
+       "text": "Vonat",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "n++; reset(Lejart)",
+          "id": "n17"
+         },
+         {
+          "type": "decision",
+          "text": "n mod 3 = 0 ?",
+          "branches": [
+           {
+            "answer": "true",
+            "trans": {
+             "actions": [
+              {
+               "type": "output",
+               "text": "Csengo\nto Bakter",
+               "id": "n20"
+              }
+             ],
+             "term": {
+              "type": "nextstate",
+              "text": "Tilos",
+              "id": "n21"
+             }
+            },
+            "id": "n19"
+           },
+           {
+            "answer": "false",
+            "trans": {
+             "actions": [],
+             "term": {
+              "type": "nextstate",
+              "text": "Tilos",
+              "id": "n23"
+             }
+            },
+            "id": "n22"
+           }
+          ],
+          "id": "n18"
+         }
+        ],
+        "term": null
+       },
+       "id": "n16"
+      },
+      {
+       "type": "input",
+       "text": "Lejart",
+       "trans": {
+        "actions": [],
+        "term": {
+         "type": "nextstate",
+         "text": "Tilos",
+         "id": "n25"
+        }
+       },
+       "id": "n24"
+      }
+     ],
+     "id": "n12"
+    }
+   ],
+   "id": "n1"
+  },
+  {
+   "name": "Bakter",
+   "init": 1,
+   "dcl": "csengetes",
+   "start": {
+    "trans": {
+     "actions": [
+      {
+       "type": "task",
+       "text": "csengetes := 0",
+       "id": "n28"
+      }
+     ],
+     "term": {
+      "type": "nextstate",
+      "text": "Alszik",
+      "id": "n29"
+     }
+    },
+    "id": "n27"
+   },
+   "states": [
+    {
+     "name": "Alszik",
+     "inputs": [
+      {
+       "type": "input",
+       "text": "Csengo",
+       "trans": {
+        "actions": [
+         {
+          "type": "task",
+          "text": "csengetes++",
+          "id": "n32"
+         },
+         {
+          "type": "output",
+          "text": "Kurbli\nto Semaphore",
+          "id": "n33"
+         }
+        ],
+        "term": {
+         "type": "nextstate",
+         "text": "-",
+         "id": "n34"
+        }
+       },
+       "id": "n31"
+      }
+     ],
+     "id": "n30"
+    }
+   ],
+   "id": "n26"
+  }
+ ]
+}
