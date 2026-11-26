@@ -148,12 +148,34 @@ function openFile() {
 }
 
 /* ---------------- window arrangement ---------------- */
+// put the side columns to the edges of the current workspace (after the browser window was resized)
+function dockSideColumns() {
+	const ca=workspace.clientArea, W=ca.w, H=ca.h;
+	if (shapeBar.visible) shapeBar.moveTo(8,8);
+	if (projectWindow.visible && !projectWindow.collapsed) {
+		projectWindow.moveTo(8,shapeBar.visible?shapeBar.h+16:8);
+		projectWindow.setSize(projectWindow.w,Math.max(150,H-projectWindow.y-8));
+	}
+	const right=[simWindow,mscWindow].filter(w=>w.visible);
+	if (!right.length) return 0;
+	const R=Math.max(360,Math.min(Math.max(simWindow.w,mscWindow.w),Math.round(W*0.4)));
+	let y=8;
+	right.forEach((w,i)=>{
+		const last=i===right.length-1;
+		const h=last ? H-y-8 : Math.min(w.collapsed?ddhead:w.h,Math.round(H*0.6));
+		w.moveTo(W-R-8,y);
+		if (!w.collapsed) w.setSize(R,Math.max(w.minH,h)); else w.w=R;
+		y+=w.h+8;
+	});
+	return R;
+}
 function tileWindows(list,x0,y0,x1,y1) {
 	const ca=workspace.clientArea;
 	if (x0===undefined) {
-		// the area between the palette column and the simulator column
-		x0=148; y0=8; y1=ca.h-8;
-		x1=(simWindow.visible && simWindow.x>x0+300) ? simWindow.x-8 : ca.w-8;
+		// everything between the palette column and the simulator column, in the current window size
+		const R=dockSideColumns();
+		x0=(shapeBar.visible||projectWindow.visible)?148:8; y0=8; y1=ca.h-8;
+		x1=R ? ca.w-R-16 : ca.w-8;
 	}
 	const n=list.length; if (!n) return;
 	const cols=n<=3?n:Math.ceil(Math.sqrt(n)), rows=Math.ceil(n/cols);
