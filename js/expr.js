@@ -102,6 +102,7 @@ const Expr = (()=>{
 				p++;
 				const low=t.v.toLowerCase();
 				if (low==="true") return {k:"bool",v:true};
+				if (low==="null") return {k:"null",v:null};       // the NULL pid
 				if (low==="false") return {k:"bool",v:false};
 				if (isOp("(")) {
 					p++;
@@ -129,7 +130,7 @@ const Expr = (()=>{
 	// scope: { get(name) -> value, call(name,args) -> value }
 	function evaluate(e,scope) {
 		switch (e.k) {
-			case "num": case "str": case "bool": return e.v;
+			case "num": case "str": case "bool": case "null": return e.v;
 			case "id": return scope.get(e.name,e.raw);
 			case "un": {
 				const v=evaluate(e.e,scope);
@@ -267,6 +268,7 @@ const Expr = (()=>{
 	}
 
 	function toText(v) {
+		if (v===null || v===undefined) return "NULL";
 		if (typeof v==="string") return v;
 		if (typeof v==="number") return Number.isInteger(v)?String(v):String(Math.round(v*1000)/1000);
 		return String(v);

@@ -39,7 +39,7 @@
          },
          {
           "type": "output",
-          "text": "MSG(count)",
+          "text": "MSG(count)\nto Receiver",
           "id": "n8"
          }
         ],

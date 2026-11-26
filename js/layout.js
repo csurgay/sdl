@@ -114,7 +114,7 @@ function layoutProcess(proc) {
 	});
 	const W=Math.max(maxW+L.LEFT-L.GAP,360), H=y+rowH+L.GAP;
 	// process frame with its name, like on paper
-	items.unshift({kind:"frame",x:6,y:6,w:W-12,h:H-12,text:"PROCESS "+proc.name+(parseInt(proc.init)!==1?"  ("+proc.init+")":"")});
+	items.unshift({kind:"frame",x:6,y:6,w:W-12,h:H-12,text:"PROCESS "+proc.name+((parseInt(proc.init)!==1 || Model.maxOf(proc)!==null)?"  ("+Model.instancesText(proc)+")":"")});
 	return { items, byId, w:W, h:H };
 }
 

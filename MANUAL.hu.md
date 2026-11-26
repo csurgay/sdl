@@ -21,7 +21,7 @@ A munkaterületen menüsor és a következő ablakok vannak:
 | Ablak | Mire való |
 |---|---|
 | **Symbols** | az SDL szimbólumok palettája, innen húzod őket a diagramra |
-| **Project** | a rendszer processzei, a kezdeti példányszámukkal |
+| **Project** | a rendszer processzei, a kezdeti és a maximális példányszámukkal |
 | **Process … – editor** | minden processznek egy szerkesztőablak |
 | **Simulator** | a szimuláció vezérlése, a környezet (env) és a napló |
 | **Message Sequence Chart** | a futó szimuláció MSC-je |
@@ -47,15 +47,17 @@ Egy **projekt** (SDL system) **processzekből** áll. Minden processznek van:
 * egy **DCL** doboza a változóival,
 * egy **start átmenete**,
 * **állapotai**, és minden állapotban **inputjai** (és save-jei) az átmeneteikkel,
-* **kezdeti példányszáma**: hány példánya létezik a szimuláció indulásakor. A 0 azt jelenti, hogy példányait csak egy másik processz **Create** szimbóluma hozza létre (mint a GAME a Guessing Game-ben).
+* **példányszáma**, az SDL-ben megszokott módon: `PROCESS GAME (0, 10)`
+  * az első szám a **kezdeti** példányszám: hány példánya létezik a szimuláció indulásakor. A 0 azt jelenti, hogy példányait csak egy másik processz **Create** szimbóluma hozza létre (mint a GAME a Guessing Game-ben).
+  * a vessző utáni második szám az egyszerre élő példányok **maximális** száma. Ha nincs megadva, nincs felső korlát. Ha a maximum betelt, a Create nem hoz létre új példányt (lásd 5.7).
 
-A **Project** ablak a processzeket `NÉV [kezdeti példányszám]` formában sorolja fel.
+A **Project** ablak a processzeket `NÉV (kezdeti, maximum)` formában sorolja fel; a diagram processzkerete ugyanezt mutatja.
 
 * dupla kattintás egy processzre: megnyitja a szerkesztőjét
 * **New** gomb: új processz; **Open**: a kijelölt processz szerkesztője
-* jobb kattintás vagy a **…** gomb: átnevezés, kezdeti példányszám, processz törlése, a projekt átnevezése
+* jobb kattintás vagy a **…** gomb: átnevezés, **Instances (initial, max)…**, processz törlése, a projekt átnevezése. A példányszám-ablakba `1`-et írj (egy példány, nincs maximum), vagy például `0, 10`-et (induláskor egy sem, legfeljebb 10).
 
-Ugyanez megvan a **Process** menüben is (New process, Edit …, Rename …, Initial instances of …).
+Ugyanez megvan a **Process** menüben is (New process, Edit …, Rename …, Instances of … (initial, max)).
 
 ---
 ## 4. Processz rajzolása
@@ -148,14 +150,13 @@ print('n is', n)
 ```
 PROMPT to player
 INIT(sender, n) to offspring
-MSG(count)
+MSG(count) to Receiver
 WINNER to player; LOG(1) to env
 ```
 
 * `JEL(argumentumok) to címzett` – az argumentumok kifejezések, a küldés pillanatában értékelődnek ki
-* `to …` nélkül a jel egy olyan példányhoz megy, amelynek processze tartalmaz erre a jelre inputot (elsősorban olyanhoz, amelyik épp olyan állapotban vár, ahol fogadja), különben a környezethez
+* **a címzett kötelező**, és **pontosan egy** élő fogadót kell adnia: egy pid-et, vagy egy olyan processz nevét, amelynek pontosan egy élő példánya van (lásd 7.1). Különben a szimuláció futási hibával megáll.
 * egy output szimbólumban több jel: `;`-vel elválasztva
-* a címzett egy *pid kifejezés*, lásd a 6. fejezetet
 
 ### 5.4 Input
 
@@ -205,17 +206,19 @@ Jobb kattintás a decisionön: **Add branch**. Ha egyik ág sem illeszkedik, a s
 
 Egy processz neve: `GAME`. Létrejön egy új példánya; a létrehozóban az `offspring` az új példány lesz, az újban a `parent` a létrehozó.
 
+Ha a processznek már a **maximális** számú élő példánya van, nem jön létre új példány, és az `offspring` értéke `null` lesz (ahogy az SDL-ben). Ezt egy `offspring = null ?` decision kezelheti; ha ilyenkor az `offspring`-nek küldenél, az futási hiba.
+
 ### 5.8 Lezárók
 
 * **nextstate** (az állapotszimbólum az átmenet végén): egy állapot neve, vagy `-` ugyanarra az állapotra
-* **stop** (kör × jellel): a példány megszűnik; a később neki küldött jelek elvesznek
+* **stop** (kör × jellel): a példány megszűnik; ha később valaki jelet küld neki, az futási hiba
 
 ---
 ## 6. Kifejezések
 
 ### 6.1 Értékek és műveletek
 
-* **számok:** `0`, `42`, `3.5`; **szövegek:** `'abc'` vagy `"abc"`; **logikai értékek:** `true`, `false`
+* **számok:** `0`, `42`, `3.5`; **szövegek:** `'abc'` vagy `"abc"`; **logikai értékek:** `true`, `false`; az üres pid: `null`
 * **aritmetika:** `+  -  *  /`, `mod` (vagy `%`) és `rem`
   * két egész szám `/` osztása egész osztás: `7 / 2` értéke 3
   * a `mod` sosem negatív: `-1 mod 5` értéke 4; a `rem` megtartja az előjelet: `-1 rem 5` értéke -1
@@ -224,18 +227,33 @@ Egy processz neve: `GAME`. Létrejön egy új példánya; a létrehozóban az `o
 * **logika:** `and` (`&&`), `or`, `not` (`!`)
 * **zárójelek** a szokásos módon
 
-### 6.2 Különleges nevek
+### 6.2 Típusok
+
+A típusokat nem kell deklarálni: egy változó annak az értéknek a típusát veszi fel, amelyet kap. A szokásos beépített típusok használhatók:
+
+| Típus | Értékek |
+|---|---|
+| **Integer** | `0`, `-3`, `42` |
+| **Real** | `3.5`, `7 / 2.0` |
+| **Boolean** | `true`, `false` |
+| **Character** | egykarakteres szöveg: `'a'` |
+| **Charstring** | `'abc'`, `"abc"` |
+| **PId** | `self`, `sender`, `GAME1`, `env`, … és `null` (nincs példány) |
+
+A szimulációs idő (`now`) és a timerek késleltetése szám.
+
+### 6.3 Különleges nevek
 
 | Név | Értéke |
 |---|---|
 | `self` | ennek a példánynak a pid-je |
-| `sender` | az utoljára fogadott jel küldőjének pid-je |
-| `parent` | a példány, amelyik ezt létrehozta (a kezdeti példányoknál env) |
-| `offspring` | az ez által utoljára létrehozott példány |
+| `sender` | az utoljára fogadott jel küldőjének pid-je (az első jel előtt `null`) |
+| `parent` | a példány, amelyik ezt létrehozta (a kezdeti példányoknál `null`) |
+| `offspring` | az ez által utoljára létrehozott példány (az első create előtt, vagy ha a create nem sikerült: `null`) |
 | `now` | az aktuális szimulációs idő |
 | `env` | a környezet |
 
-### 6.3 Függvények
+### 6.4 Függvények
 
 | Függvény | Eredmény |
 |---|---|
@@ -246,7 +264,7 @@ Egy processz neve: `GAME`. Létrejön egy új példánya; a létrehozóban az `o
 | `floor(x)`, `round(x)` | lefelé kerekítés, kerekítés a legközelebbire |
 | `print(…)` vagy `log(…)` | kiírja az argumentumait a szimuláció naplójába |
 
-### 6.4 A random használata
+### 6.5 A random használata
 
 A `random` minden kiértékelésnél új számot sorsol, így ugyanaz a modell minden futásban másképp viselkedhet.
 
@@ -260,17 +278,27 @@ A véletlen viselkedés jó a versenyhelyzetek bemutatására, de ha egy szimul�
 ---
 ## 7. Jelek, címzettek és idő
 
-### 7.1 Pid kifejezések – hová megy a jel
+### 7.1 Címzettek – hová megy a jel
+
+Minden jelnek **pontosan egy címzettje** van, ezt a `to` után kell megadni. Csatornák és signal route-ok nincsenek: a címzettet közvetlenül nevezed meg, pid-del vagy processznévvel.
 
 A `to` utáni címzett lehet
 
 * `self`, `sender`, `parent`, `offspring`, `env`
 * egy pid-et tartalmazó változó (például `player`, amely korábban a `sender` értékét kapta)
 * egy példány neve: `GAME1`, `Villa3`
-* egy processz neve: `Server` – annak első élő példánya
+* egy processz neve: `Server` – csak akkor, ha **pontosan egy** élő példánya van
 * bármely kifejezés, amelynek ezek egyike az értéke: `'Villa' + (en mod n + 1)`
 
 A példányok neve a processzük neve és egy sorszám: MA1, GAME1, GAME2, …
+
+Futási hibák (a szimuláció megáll, és pirossal mutatja az output szimbólumot):
+
+* az outputban nincs `to …`
+* a címzett `null` (például egy kezdeti példány `parent`-je, vagy az `offspring` egy elutasított create után)
+* a címzett példány már leállt
+* a megnevezett processznek nincs élő példánya, vagy egynél több van (ilyenkor pid-nek küldj, pl. `offspring`, `sender` vagy egy változó)
+* a név nem processz, nem példány és nem env
 
 ### 7.2 Timerek
 
@@ -304,11 +332,11 @@ A rendszer kívülről az **env:** soron át kap jeleket:
 ```
 CALL to MA
 GUESS(3) to GAME1
-PRODUCED
+PRODUCED to Sender
 ```
 
 * írd be a jelet, és nyomj **Entert** (vagy **Send**); a sor nyitva marad a következőnek
-* `to …` nélkül a jel olyan példányhoz megy, amelynek van rá inputja
+* a címzett itt is kötelező, ugyanazokkal a szabályokkal (7.1 fejezet)
 * a Send melletti **▾**: a korábban küldött jelek, és javaslatok azokra a jelekre, amelyeket a példányok most fogadnak
 * a zöld **accepts now →** sor mutatja, melyik példány melyik jelet fogadja a jelenlegi állapotában
 * az `env`-nek küldött jelek a naplóban jelennek meg (env ← …)
@@ -340,9 +368,9 @@ Minden példánynak saját ablaka van (`GAME1 : GAME`):
 | env → / env ← | jel a környezettől / a környezetnek |
 | X created Y | Create |
 | discarded … in state … | az állapotnak nem volt inputja a jelre (és nem is save-elte) |
-| lost … | a címzett már leállt |
+| create … refused | a processznek már megvolt a maximális példányszáma; offspring = null |
 | timer … expired | timer jel érkezett |
-| ERROR … | a szimuláció megállt, pl. nem deklarált változó, nincs illeszkedő ág, ismeretlen címzett |
+| ERROR … | a szimuláció megállt, pl. nem deklarált változó, nincs illeszkedő ág, nincs vagy több címzett, leállt vagy null címzett |
 | DEADLOCK? … | semmi sem tud lépni, a sorokban csak save-elt jelek várnak |
 
 Hiba után javítsd a modellt, és nyomd meg a **Reset**-et.
@@ -377,7 +405,7 @@ A programmal együtt érkező példák:
 | Fájl | Mit mutat be |
 |---|---|
 | 01-guessing-game | create, offspring / parent / sender, decision, stop |
-| 02-ping-pong | implicit címzés, save |
+| 02-ping-pong | save, küldés processznévvel |
 | 03-handshake | a legegyszerűbb kliens–szerver üzenetváltás |
 | 04-semaphore | timerek (set / reset), decision mod-dal |
 | 05-dining-philosophers-deadlock | önmagának küldött jeles ciklus, pid kifejezések, save, véletlen idők, holtpont |
@@ -403,4 +431,6 @@ A programmal együtt érkező példák:
 ---
 ## 12. (Még) nem támogatott
 
-System és block diagramok csatornákkal, join / label connectorok, procedure-ök, continuous signal-ok, enabling condition-ök, jeldeklarációk, és a teljes holtpontkeresés (állapottér-bejárás).
+Join / label connectorok, procedure-ök, formális paraméterek (FPAR), continuous signal-ok, enabling condition-ök, jel- és adattípus-deklarációk, és a teljes holtpontkeresés (állapottér-bejárás).
+
+A csatornás és signal route-os system és block diagramokat szándékosan hagytuk ki: minden jel közvetlenül megnevezi az egyetlen címzettjét (7.1 fejezet).

@@ -258,7 +258,7 @@ class ProjectWindow extends Window {
 		this.class="ProjectWindow";
 		this.title=()=>"Project: "+(Model.project?Model.project.name:"");
 		this.list=this.push(new ListView(0,0,10,10,{
-			items:()=>Model.project.processes.map(p=>({ text:p.name+"   ["+p.init+"]", data:p })),
+			items:()=>Model.project.processes.map(p=>({ text:p.name+"   ("+Model.instancesText(p)+")", data:p })),
 			onDbl:(it)=>Editors.open(it.data),
 			onCtx:(it,e)=>this.menu(it,e),
 		}));
@@ -283,7 +283,7 @@ class ProjectWindow extends Window {
 		popupMenu([
 			{caption:"Open editor",enabled:()=>!!p,action:()=>Editors.open(p)},
 			{caption:"Rename…",enabled:()=>!!p,action:()=>renameProcessDialog(p)},
-			{caption:"Initial instances…",enabled:()=>!!p,action:()=>initDialog(p)},
+			{caption:"Instances (initial, max)…",enabled:()=>!!p,action:()=>initDialog(p)},
 			{caption:"Delete",enabled:()=>!!p,action:()=>WM.confirm("Delete process","Delete process "+p.name+"?",()=>{ Model.edit("delproc",()=>{ Model.project.processes.splice(Model.project.processes.indexOf(p),1); }); Editors.closeMissing(); })},
 			"-",
 			{caption:"New process…",action:()=>newProcessDialog()},
@@ -309,9 +309,9 @@ function renameProcessDialog(p) {
 	});
 }
 function initDialog(p) {
-	WM.prompt("Initial instances","Number of instances of "+p.name+" at start (0 = only created dynamically):",String(p.init),(v)=>{
-		const n=parseInt(v);
-		if (isNaN(n)||n<0||n>20) { WM.message("Initial instances","Give a number between 0 and 20."); return; }
-		Model.edit("init",()=>{ p.init=n; });
-	});
+	WM.prompt("Instances of "+p.name,"Initial, maximum (e.g.  0, 10  or just  1 = no maximum):",Model.instancesText(p),(v)=>{
+		let r;
+		try { r=Model.parseInstances(v); } catch(e) { WM.message("Instances",e.message); return; }
+		Model.edit("init",()=>{ p.init=r.init; p.max=r.max; });
+	},440);
 }

@@ -153,7 +153,7 @@ A küldő folyamat kap egy külső kérést üzenetküldésre. A vevő ezt kézb
 
 ::diagram Ping Pong Sender
 ::diagram Ping Pong Receiver
-::msc Ping Pong PRODUCED; PRODUCED
+::msc Ping Pong PRODUCED to Sender; PRODUCED to Sender
 
 ---
 ## 7. Kapcsolat más formális eszközökkel
@@ -330,7 +330,7 @@ The sending process gets an external request to send a message. The receiver del
 
 ::diagram Ping Pong Sender
 ::diagram Ping Pong Receiver
-::msc Ping Pong PRODUCED; PRODUCED
+::msc Ping Pong PRODUCED to Sender; PRODUCED to Sender
 
 ---
 ## 7. Relation to other formal tools
@@ -575,7 +575,7 @@ class TheoryLayout {
 	}
 }
 
-// "Guessing Game MA" -> {name, project, rest}; with script: "Ping Pong PRODUCED; PRODUCED"
+// "Guessing Game MA" -> {name, project, rest}; with script: "Ping Pong PRODUCED to Sender; PRODUCED to Sender"
 function theoryExample(arg,withScript=false) {
 	const norm=(s)=>s.toLowerCase().replace(/[^a-z0-9]/g,"");
 	let best=null;

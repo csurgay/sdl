@@ -4,12 +4,13 @@
 //  - every process instance has an input queue; a transition runs to its end (one symbol per step)
 //  - in a state the first queued signal that is not SAVEd is taken: if the state has an input
 //    for it the transition starts, otherwise it is discarded (implicit consumption)
-//  - output: explicit "to <pid expression>", or implicit routing to an instance that has
-//    an input for that signal, otherwise to the environment ("env")
-//  - create sets offspring / parent, stop terminates the instance
+//  - output: "to <receiver>" is obligatory and must give exactly one living receiver:
+//    a pid (self, sender, parent, offspring, a variable, an instance name like GAME1, env)
+//    or a process name with exactly one living instance - anything else is a runtime error
+//  - create sets offspring / parent (NULL when the maximum number of instances is reached),
+//    stop terminates the instance
 //  - timers: set(now+d, T) / reset(T); time advances only when nothing else can run
-//  - pid expressions: self, sender, parent, offspring, env, an instance name (Game1)
-//    or a process name (GAME -> its first living instance)
+//  - values: Integer, Real, Boolean, Character, Charstring and PId (null = NULL)
 "use strict";
 
 class Simulator {
@@ -38,7 +39,11 @@ class Simulator {
 		this.steps=0;
 		this.emit({type:"reset"});
 		try {
-			this.project.processes.forEach(p=>{ for (let k=0;k<(parseInt(p.init)||0);k++) this.spawn(p,null); });
+			this.project.processes.forEach(p=>{
+				const n=parseInt(p.init)||0, max=Model.maxOf(p);
+				if (max!==null && n>max) throw new SdlError("process "+p.name+": more initial instances ("+n+") than the maximum ("+max+")");
+				for (let k=0;k<n;k++) this.spawn(p,null);
+			});
 		} catch(e) { this.fail(e,null,null); }
 	}
 	/* ---------------- instances ---------------- */
@@ -59,19 +64,25 @@ class Simulator {
 		return this.instances.find(i=>i.pid.toLowerCase()===n)||null;
 	}
 	alive() { return this.instances.filter(i=>i.alive); }
+	// the receiver of an output: exactly one living instance (or env), otherwise a runtime error
 	resolvePid(v,self) {
-		if (v===null || v===undefined) throw new SdlError("undefined pid (null)");
-		const s=String(v);
+		if (v===null || v===undefined) throw new SdlError("the receiver is NULL (no such pid yet, or the create was refused)");
+		if (typeof v!=="string") throw new SdlError("the receiver must be a pid or a process name, not "+Expr.toText(v));
+		const s=v;
 		if (s.toLowerCase()==="env") return "env";
 		const i=this.find(s);
-		if (i) return i.pid;
+		if (i) {
+			if (!i.alive) throw new SdlError("the receiver "+i.pid+" has already stopped");
+			return i.pid;
+		}
 		const p=this.project.processes.find(p=>p.name.toLowerCase()===s.toLowerCase());
 		if (p) {
-			const first=this.instances.find(x=>x.alive && x.proc.name===p.name && x!==self);
-			if (first) return first.pid;
-			throw new SdlError("no living instance of process "+p.name);
+			const living=this.alive().filter(x=>x.proc===p || x.proc.name===p.name);
+			if (living.length===1) return living[0].pid;
+			if (!living.length) throw new SdlError("process "+p.name+" has no living instance to receive the signal");
+			throw new SdlError("process "+p.name+" has "+living.length+" living instances ("+living.map(x=>x.pid).join(", ")+") – send to a pid (e.g. offspring, sender, a variable) instead");
 		}
-		throw new SdlError("unknown receiver '"+s+"'");
+		throw new SdlError("unknown receiver '"+s+"' (not a process, an instance or env)");
 	}
 	scope(inst) {
 		const sim=this;
@@ -80,9 +91,9 @@ class Simulator {
 				if (inst && Object.prototype.hasOwnProperty.call(inst.vars,name)) return inst.vars[name];
 				switch (name) {
 					case "self": if (inst) return inst.pid; break;
-					case "sender": if (inst) { if (inst.sender===null) throw new SdlError("sender is null (no signal consumed yet)"); return inst.sender; } break;
-					case "parent": if (inst) { if (inst.parent===null) return "env"; return inst.parent; } break;
-					case "offspring": if (inst) { if (inst.offspring===null) throw new SdlError("offspring is null (nothing created yet)"); return inst.offspring; } break;
+					case "sender": if (inst) return inst.sender; break;          // null = NULL until a signal is consumed
+					case "parent": if (inst) return inst.parent; break;          // NULL for the initial instances
+					case "offspring": if (inst) return inst.offspring; break;    // NULL until a successful create
 					case "now": return sim.now;
 					case "env": return "env";
 				}
@@ -112,17 +123,8 @@ class Simulator {
 		};
 	}
 	/* ---------------- signal delivery ---------------- */
-	route(name,self) {
-		const n=name.toUpperCase();
-		const cand=this.alive().filter(i=>i!==self && this.acceptsAnywhere(i.proc,n));
-		const ready=cand.find(i=>!i.pc && this.acceptsNow(i,n));
-		return ready ? ready.pid : cand.length ? cand[0].pid : "env";
-	}
 	signalsOf(entry) {
 		try { return Expr.parseInput(entry.text); } catch(e) { return []; }
-	}
-	acceptsAnywhere(proc,n) {
-		return proc.states.some(s=>s.inputs.some(e=>e.type==="input" && this.signalsOf(e).some(sg=>sg.name.toUpperCase()===n)));
 	}
 	acceptsNow(inst,n) {
 		const st=inst.state && Model.findState(inst.proc,inst.state);
@@ -132,7 +134,6 @@ class Simulator {
 		const ev=this.emit({type:"signal",from,to,name,args:args.slice(),nodeId});
 		if (to==="env") return ev;
 		const target=this.find(to);
-		if (!target || !target.alive) { this.emit({type:"lost",from,to,name}); return ev; }
 		target.queue.push({name,args:args.slice(),from,time:this.now});
 		return ev;
 	}
@@ -143,8 +144,9 @@ class Simulator {
 		const sc=this.scope(null);
 		outs.forEach(o=>{
 			const args=o.args.map(a=>Expr.evaluate(a,sc));
-			const to=o.to ? this.resolvePid(Expr.evaluate(o.to,sc),null) : this.route(o.name,null);
-			if (to==="env") throw new SdlError("no process accepts "+o.name);
+			if (!o.to) throw new SdlError(o.name+": the receiver is missing – write  "+o.name+" to <process or pid>");
+			const to=this.resolvePid(Expr.evaluate(o.to,sc),null);
+			if (to==="env") throw new SdlError("the environment cannot send to itself");
 			this.deliver("env",to,o.name,args,null);
 		});
 	}
@@ -285,7 +287,8 @@ class Simulator {
 				case "output":
 					Expr.parseOutput(node.text).forEach(o=>{
 						const args=o.args.map(a=>Expr.evaluate(a,sc));
-						const to=o.to ? this.resolvePid(Expr.evaluate(o.to,sc),inst) : this.route(o.name,inst);
+						if (!o.to) throw new SdlError("output "+o.name+" has no receiver – write  "+o.name+" to <process or pid>");
+						const to=this.resolvePid(Expr.evaluate(o.to,sc),inst);
 						this.deliver(inst.pid,to,o.name,args,node.id);
 					});
 					break;
@@ -293,6 +296,13 @@ class Simulator {
 					const cr=Expr.parseCreate(node.text);
 					const proc=Model.findProc.call({project:this.project},cr.name);
 					if (!proc) throw new SdlError("no process called "+cr.name);
+					const max=Model.maxOf(proc);
+					const living=this.alive().filter(x=>x.proc.name===proc.name).length;
+					if (max!==null && living>=max) {      // SDL: no new instance, offspring := NULL
+						inst.offspring=null;
+						this.emit({type:"createfail",pid:inst.pid,proc:proc.name,max});
+						break;
+					}
 					const child=this.spawn(proc,inst);
 					inst.offspring=child.pid;
 					break;

@@ -47,15 +47,17 @@ A **project** (an SDL system) consists of **processes**. Every process has:
 * a **DCL** box with its variables,
 * a **start transition**,
 * **states**, and in every state **inputs** (and saves) with their transitions,
-* the **number of initial instances**: how many instances exist when the simulation starts. 0 means: instances are only made by a **Create** symbol of another process (like GAME in the Guessing Game).
+* the **number of instances**, written as in SDL: `PROCESS GAME (0, 10)`
+  * the first number is the **initial** number: how many instances exist when the simulation starts. 0 means: instances are only made by a **Create** symbol of another process (like GAME in the Guessing Game).
+  * the second number, after the comma, is the **maximum** number of instances living at the same time. Without it there is no maximum. When the maximum is reached, a Create makes no new instance (see 5.7).
 
-The **Project** window lists the processes as `NAME [initial instances]`.
+The **Project** window lists the processes as `NAME (initial, maximum)`; the process frame of the diagram shows the same.
 
 * double click on a process: opens its editor
 * **New** button: new process; **Open**: editor of the selected process
-* right click or the **…** button: rename, initial instances, delete the process, rename the project
+* right click or the **…** button: rename, **Instances (initial, max)…**, delete the process, rename the project. In the instances dialog write `1` (one instance, no maximum) or `0, 10` (none at the start, at most 10).
 
-The same is in the **Process** menu (New process, Edit …, Rename …, Initial instances of …).
+The same is in the **Process** menu (New process, Edit …, Rename …, Instances of … (initial, max)).
 
 ---
 ## 4. Drawing a process
@@ -148,14 +150,13 @@ print('n is', n)
 ```
 PROMPT to player
 INIT(sender, n) to offspring
-MSG(count)
+MSG(count) to Receiver
 WINNER to player; LOG(1) to env
 ```
 
 * `SIGNAL(arguments) to receiver` – the arguments are expressions, they are evaluated when the signal is sent
-* without `to …` the signal goes to an instance whose process has an input for this signal (first one that waits in a state accepting it), otherwise to the environment
+* **the receiver is obligatory**, and it must give **exactly one** living receiver: a pid or the name of a process with exactly one living instance (see 7.1). Otherwise the simulation stops with a runtime error.
 * several signals in one output symbol: separated by `;`
-* the receiver is a *pid expression*, see chapter 6
 
 ### 5.4 Input
 
@@ -205,17 +206,19 @@ Right click a decision: **Add branch**. If no branch matches, the simulation sto
 
 The name of a process: `GAME`. A new instance of it is created; in the creator `offspring` becomes the new instance, in the new one `parent` is the creator.
 
+If the process already has its **maximum** number of living instances, no instance is created and `offspring` becomes `null` (as in SDL). A decision `offspring = null ?` can handle this; sending to `offspring` would be a runtime error.
+
 ### 5.8 Terminators
 
 * **nextstate** (the state symbol at the end of a transition): the name of a state, or `-` for the same state
-* **stop** (circle with ×): the instance terminates; signals sent to it later are lost
+* **stop** (circle with ×): the instance terminates; sending to it later is a runtime error
 
 ---
 ## 6. Expressions
 
 ### 6.1 Values and operators
 
-* **numbers:** `0`, `42`, `3.5`; **strings:** `'abc'` or `"abc"`; **booleans:** `true`, `false`
+* **numbers:** `0`, `42`, `3.5`; **strings:** `'abc'` or `"abc"`; **booleans:** `true`, `false`; the empty pid: `null`
 * **arithmetic:** `+  -  *  /`, `mod` (or `%`) and `rem`
   * `/` of two integers is an integer division: `7 / 2` is 3
   * `mod` is never negative: `-1 mod 5` is 4; `rem` keeps the sign: `-1 rem 5` is -1
@@ -224,18 +227,33 @@ The name of a process: `GAME`. A new instance of it is created; in the creator `
 * **logic:** `and` (`&&`), `or`, `not` (`!`)
 * **parentheses** as usual
 
-### 6.2 Special names
+### 6.2 Types
+
+Types are not declared: a variable takes the type of the value it gets. The usual built-in types are used:
+
+| Type | Values |
+|---|---|
+| **Integer** | `0`, `-3`, `42` |
+| **Real** | `3.5`, `7 / 2.0` |
+| **Boolean** | `true`, `false` |
+| **Character** | a string of one character: `'a'` |
+| **Charstring** | `'abc'`, `"abc"` |
+| **PId** | `self`, `sender`, `GAME1`, `env`, … and `null` (no instance) |
+
+The simulation time (`now`) and the timer delays are numbers.
+
+### 6.3 Special names
 
 | Name | Value |
 |---|---|
 | `self` | the pid of this instance |
-| `sender` | the pid of the sender of the last consumed signal |
-| `parent` | the instance that created this one (env for the initial instances) |
-| `offspring` | the instance created last by this one |
+| `sender` | the pid of the sender of the last consumed signal (`null` before the first one) |
+| `parent` | the instance that created this one (`null` for the initial instances) |
+| `offspring` | the instance created last by this one (`null` before the first create, or when the create was refused) |
 | `now` | the current simulation time |
 | `env` | the environment |
 
-### 6.3 Functions
+### 6.4 Functions
 
 | Function | Result |
 |---|---|
@@ -246,7 +264,7 @@ The name of a process: `GAME`. A new instance of it is created; in the creator `
 | `floor(x)`, `round(x)` | rounding down, to the nearest |
 | `print(…)` or `log(…)` | writes its arguments into the simulation log |
 
-### 6.4 Using random
+### 6.5 Using random
 
 Every evaluation of `random` draws a new number, so the same model can behave differently in every run.
 
@@ -260,17 +278,27 @@ Random behaviour is good for showing races, but a simulation that did *not* show
 ---
 ## 7. Signals, receivers and time
 
-### 7.1 Pid expressions – where a signal goes
+### 7.1 Receivers – where a signal goes
+
+Every signal has **exactly one receiver**, given after `to`. There are no channels or signal routes: the receiver is named directly, by pid or by process name.
 
 The receiver after `to` can be
 
 * `self`, `sender`, `parent`, `offspring`, `env`
 * a variable holding a pid (for example `player`, that got `sender` earlier)
 * the name of an instance: `GAME1`, `Villa3`
-* the name of a process: `Server` – its first living instance
+* the name of a process: `Server` – allowed only if it has **exactly one** living instance
 * any expression giving one of these: `'Villa' + (en mod n + 1)`
 
 Instances are named after their process with a running number: MA1, GAME1, GAME2, …
+
+Runtime errors (the simulation stops and shows the output symbol in red):
+
+* the output has no `to …`
+* the receiver is `null` (for example `parent` of an initial instance, or `offspring` after a refused create)
+* the receiver instance has already stopped
+* the process named has no living instance, or more than one (then send to a pid instead, e.g. `offspring`, `sender` or a variable)
+* the name is not a process, an instance or env
 
 ### 7.2 Timers
 
@@ -304,11 +332,11 @@ The system gets signals from outside through the **env:** line:
 ```
 CALL to MA
 GUESS(3) to GAME1
-PRODUCED
+PRODUCED to Sender
 ```
 
 * type the signal and press **Enter** (or **Send**); the line stays open for the next one
-* without `to …` the signal goes to an instance that has an input for it
+* the receiver is obligatory here, too, with the same rules (chapter 7.1)
 * **▾** next to Send: the signals sent before, and suggestions for the signals the instances accept now
 * the green line **accepts now →** shows which instance accepts which signal in its current state
 * signals sent to `env` appear in the log (env ← …)
@@ -340,9 +368,9 @@ One window for every instance (`GAME1 : GAME`):
 | env → / env ← | a signal from / to the environment |
 | X created Y | Create |
 | discarded … in state … | the state had no input for the signal (and did not save it) |
-| lost … | the receiver had already stopped |
+| create … refused | the process already had its maximum number of instances; offspring = null |
 | timer … expired | a timer signal arrived |
-| ERROR … | the simulation stopped, e.g. undefined variable, no decision branch, unknown receiver |
+| ERROR … | the simulation stopped, e.g. undefined variable, no decision branch, no or more than one receiver, stopped or null receiver |
 | DEADLOCK? … | nothing can move, only saved signals wait in the queues |
 
 After an error correct the model and press **Reset**.
@@ -377,7 +405,7 @@ Examples that come with the tool:
 | File | What it shows |
 |---|---|
 | 01-guessing-game | create, offspring / parent / sender, decision, stop |
-| 02-ping-pong | implicit addressing, save |
+| 02-ping-pong | save, sending to a process by name |
 | 03-handshake | the simplest client–server exchange |
 | 04-semaphore | timers (set / reset), decision with mod |
 | 05-dining-philosophers-deadlock | a self-signal loop, pid expressions, save, random times, deadlock |
@@ -403,4 +431,6 @@ Examples that come with the tool:
 ---
 ## 12. Not supported (yet)
 
-System and block diagrams with channels, join / label connectors, procedures, continuous signals, enabling conditions, signal declarations, and the exhaustive deadlock search (state space exploration).
+Join / label connectors, procedures, formal parameters (FPAR), continuous signals, enabling conditions, signal and data type declarations, and the exhaustive deadlock search (state space exploration).
+
+System and block diagrams with channels and signal routes are left out on purpose: every signal names its single receiver directly (chapter 7.1).

@@ -67,7 +67,7 @@ processmenu.build=(m)=>{
 	if (cur) {
 		m.add("-");
 		m.add("Rename "+cur.name+"…",()=>renameProcessDialog(cur));
-		m.add("Initial instances of "+cur.name+"…",()=>initDialog(cur));
+		m.add("Instances of "+cur.name+" (initial, max)…",()=>initDialog(cur));
 	}
 };
 

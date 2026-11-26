@@ -90,13 +90,26 @@ const Model = {
 			});
 		};
 		walk(fix); walk(assign);
-		p.processes.forEach(pr=>{ if (pr.init===undefined) pr.init=1; if (pr.dcl===undefined) pr.dcl=""; });
+		p.processes.forEach(pr=>{ if (pr.init===undefined) pr.init=1; if (pr.max===undefined) pr.max=null; if (pr.dcl===undefined) pr.dcl=""; });
 	},
 
 	/* ---------------- queries ---------------- */
 	findProc(name) {
 		const n=String(name).toLowerCase();
 		return this.project.processes.find(p=>p.name.toLowerCase()===n)||null;
+	},
+	// PROCESS GAME (0, 10): initial and maximum number of instances (max null = unlimited)
+	maxOf(proc) { const m=parseInt(proc.max); return isNaN(m) ? null : m; },
+	instancesText(proc) { const m=this.maxOf(proc); return (parseInt(proc.init)||0)+(m===null?"":", "+m); },
+	// "0, 10" or "1" -> {init, max}; throws on bad input
+	parseInstances(text) {
+		const m=String(text).trim().replace(/^\(|\)$/g,"").match(/^(\d+)\s*(?:,\s*(\d*)\s*)?$/);
+		if (!m) throw new SdlError("write the initial number, or initial and maximum:  1   or   0, 10");
+		const init=parseInt(m[1]), max=m[2]!==undefined && m[2]!=="" ? parseInt(m[2]) : null;
+		if (init>50) throw new SdlError("at most 50 initial instances");
+		if (max!==null && max<1) throw new SdlError("the maximum must be at least 1");
+		if (max!==null && init>max) throw new SdlError("the initial number ("+init+") is more than the maximum ("+max+")");
+		return {init,max};
 	},
 	findState(proc,name) {
 		const n=String(name).toLowerCase();
@@ -309,7 +322,7 @@ function examplePingPong() {
 	const {T,O,N}=SdlBuild;
 	return { format:"sdl-tool/1", name:"Ping Pong", processes:[
 		SdlBuild.proc("Sender",1,"count",[T("count := 0"),N("READY")],{
-			READY:[{input:"PRODUCED",steps:[T("count++"),O("MSG(count)"),N("WAIT_ACK")]}],
+			READY:[{input:"PRODUCED",steps:[T("count++"),O("MSG(count)\nto Receiver"),N("WAIT_ACK")]}],
 			WAIT_ACK:[{input:"ACK",steps:[N("READY")]}, {save:"PRODUCED"}],
 		}),
 		SdlBuild.proc("Receiver",1,"k",[N("READY2")],{

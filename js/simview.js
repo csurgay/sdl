@@ -106,7 +106,7 @@ const SimCtl = {
 				break;
 			case "stop": this.addLog(t+ev.pid+" stopped",THEME.textDim); break;
 			case "discard": this.addLog(t+ev.pid+" discarded "+ev.name+" in state "+ev.state,"#a05a00"); break;
-			case "lost": this.addLog(t+"signal "+ev.name+" to "+ev.to+" lost (receiver stopped)","#a05a00"); break;
+			case "createfail": this.addLog(t+ev.pid+": create "+ev.proc+" refused – its maximum ("+ev.max+") is reached, offspring = NULL","#a05a00"); break;
 			case "timeout": this.addLog(t+"timer "+ev.name+" expired in "+ev.pid,"#6a3d9a"); break;
 			case "log": this.addLog(t+ev.pid+": "+ev.text,THEME.text); break;
 			case "error": {
@@ -224,7 +224,7 @@ class InstanceInfo extends Area {
 		c.fillRect(this.ax,this.ay,this.w,this.h,i.alive?"#f4f7fa":"#eeeeee");
 		c.line(this.ax,this.ay+this.h-0.5,this.w,0,"#c2c7ce");
 		const st=!i.alive?"STOPPED":(i.state===null?"(start transition)":i.state)+(i.pc?"  ▸ running":"");
-		const f=(v)=>v===null?"-":Expr.toText(v);
+		const f=(v)=>Expr.toText(v);
 		c.fitText("State: "+st+"     sender: "+f(i.sender)+"   parent: "+f(i.parent)+"   offspring: "+f(i.offspring),x,this.ay+10,this.w-16,"left",i.alive?THEME.text:THEME.textDim,THEME.fontBold);
 		const vars=Object.keys(i.vars).map(k=>k+" = "+Expr.toText(i.vars[k])).join(",   ");
 		c.fitText("Vars: "+(vars||"-"),x,this.ay+28,this.w-16,"left",THEME.text,THEME.fontMono);
@@ -344,7 +344,7 @@ class MscView extends Area {
 				case "stop": rows.push({k:"stop",pid:ev.pid,row}); end.set(ev.pid,row); row++; break;
 				case "timeout": rows.push({k:"timeout",pid:ev.pid,text:ev.name,row}); row++; break;
 				case "discard": rows.push({k:"note",pid:ev.pid,text:"✗ "+ev.name,row,color:"#a05a00"}); row++; break;
-				case "lost": rows.push({k:"note",pid:ev.from,text:"lost "+ev.name,row,color:"#a05a00"}); row++; break;
+				case "createfail": rows.push({k:"note",pid:ev.pid,text:"create "+ev.proc+" refused (max "+ev.max+")",row,color:"#a05a00"}); row++; break;
 				case "time": rows.push({k:"time",text:"t = "+Expr.toText(ev.now),row}); row++; break;
 				case "error": rows.push({k:"note",pid:ev.pid||"env",text:"ERROR: "+ev.text,row,color:"#c01818"}); row++; break;
 			}
