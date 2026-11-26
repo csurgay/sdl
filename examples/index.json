@@ -4,5 +4,6 @@
  "03-handshake.sdl.json",
  "04-semaphore.sdl.json",
  "05-dining-philosophers-deadlock.sdl.json",
- "06-dining-philosophers-fixed.sdl.json"
+ "06-dining-philosophers-fixed.sdl.json",
+ "07-GuessingGame_Losers_atGuess_30sec.sdl.json"
 ]

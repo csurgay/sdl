@@ -94,7 +94,12 @@ class Simulator {
 			},
 			call(name,args) {
 				switch (name) {
-					case "random": { const a=Math.ceil(args[0]), b=Math.floor(args.length>1?args[1]:args[0]); return a+Math.floor(Math.random()*(b-a+1)); }
+					case "random": {   // random(a,b): integer a..b,  random(n): integer 1..n
+						if (!args.length || args.some(x=>typeof x!=="number")) throw new SdlError("usage: random(a, b) or random(n)");
+						let a=args.length>1?Math.ceil(args[0]):1, b=Math.floor(args.length>1?args[1]:args[0]);
+						if (a>b) [a,b]=[b,a];
+						return a+Math.floor(Math.random()*(b-a+1));
+					}
 					case "abs": return Math.abs(args[0]);
 					case "min": return Math.min(...args);
 					case "max": return Math.max(...args);

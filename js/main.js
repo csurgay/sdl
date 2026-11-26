@@ -105,33 +105,9 @@ var helpmenu=mainmenu.addMenu("Help");
 helpmenu.add("SDL Theory (English)…",()=>showTheory("en"),{key:"F1",checked:()=>!!(theoryWindow&&theoryWindow.visible&&theoryWindow.view.lang==="en")});
 helpmenu.add("SDL elmélet (magyar)…",()=>showTheory("hu"),{checked:()=>!!(theoryWindow&&theoryWindow.visible&&theoryWindow.view.lang==="hu")});
 helpmenu.add("-");
-helpmenu.add("Usage…",()=>WM.message("Usage",[
-	"EXAMPLES",
-	"  File / Example: every *.sdl.json file of the examples/ folder",
-	"  add one: File / Save, copy the file into examples/, then run",
-	"  node tools/examples-index.js  (or File / Reload examples on a server",
-	"  with folder listing);  remove a file to hide that example",
-	"",
-	"EDITOR",
-	"  drag a symbol from Symbols onto a diagram symbol: inserted after it",
-	"  or select a diagram symbol and click a palette symbol",
-	"  double click / F2: edit text,  Del: delete,  right click: menu",
-	"  State on the background: new state;  on a nextstate: change it",
-	"  wheel: scroll,  Ctrl+wheel: zoom,  drag background: pan,  0: fit",
-	"  Ctrl+Z / Ctrl+Y: undo / redo,  Ctrl+S: save,  Ctrl+O: open",
-	"",
-	"TEXT IN THE SYMBOLS",
-	"  task:      n := 0;  n++;  set(now+5, T);  reset(T)",
-	"  output:    SIG(a, b) to offspring      (to: self sender parent",
-	"             offspring env, an instance or process name)",
-	"  input:     SIG(x, y)  – parameters are stored in variables",
-	"  decision:  n = m ?   branches: true / false / 3 / >5 / else",
-	"  DCL box:   n, m, s := 'abc'",
-	"",
-	"SIMULATION",
-	"  F9 reset,  F10 step,  Shift+F10 transition,  F8 run / pause",
-	"  env line in the Simulator window:  GUESS(3) to GAME1",
-].join("\n"),560));
+helpmenu.add("User manual (English)…",()=>showManual("en"),{key:"Shift+F1",checked:()=>!!(manualWindow&&manualWindow.visible&&manualWindow.view.lang==="en")});
+helpmenu.add("Használati útmutató (magyar)…",()=>showManual("hu"),{checked:()=>!!(manualWindow&&manualWindow.visible&&manualWindow.view.lang==="hu")});
+helpmenu.add("-");
 helpmenu.add("About…",()=>WM.message("About","SDL-88 Design Tool\nEditor and simulator for SDL process diagrams.\nPure canvas window system.\n\n2019-2026 Peter Csurgay"));
 
 /* ---------------- keys ---------------- */
@@ -142,6 +118,7 @@ WM.addKey("s",()=>saveFile(),true);
 WM.addKey("o",()=>openFile(),true);
 WM.addKey("F8",()=>SimCtl.run());
 WM.addKey("F1",()=>showTheory());
+WM.addKey("F1",()=>showManual(),false,true);
 WM.addKey("F9",()=>SimCtl.reset());
 WM.addKey("F10",()=>SimCtl.step());
 WM.addKey("F10",()=>SimCtl.stepTransition(),false,true);

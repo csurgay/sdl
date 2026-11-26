@@ -206,10 +206,31 @@ const Expr = (()=>{
 	function parseOutput(src) {
 		const out=[];
 		splitTop(src,";").forEach(part=>{
-			const m=part.trim().match(/^([A-Za-z_]\w*)\s*(?:\(([\s\S]*)\))?\s*(?:\bto\s+([\s\S]+))?$/i);
+			const p=part.trim();
+			const m=p.match(/^([A-Za-z_]\w*)\s*/);
 			if (!m) throw new SdlError("signal expected: NAME(args) to target");
-			const args=m[2]!==undefined ? splitTop(m[2],",").map(parse) : [];
-			out.push({name:m[1],args,to:m[3]?parse(m[3]):null});
+			let rest=p.slice(m[0].length), args=[];
+			if (rest[0]==="(") {            // arguments up to the matching ")"
+				let depth=0, q=null, end=-1;
+				for (let i=0;i<rest.length && end<0;i++) {
+					const ch=rest[i];
+					if (q) { if (ch===q) q=null; continue; }
+					if (ch==='"'||ch==="'") q=ch;
+					else if (ch==="(") depth++;
+					else if (ch===")" && --depth===0) end=i;
+				}
+				if (end<0) throw new SdlError("')' expected");
+				const inner=rest.slice(1,end).trim();
+				args=inner ? splitTop(inner,",").map(parse) : [];
+				rest=rest.slice(end+1).trim();
+			}
+			let to=null;
+			if (rest) {
+				const t=rest.match(/^to\s+([\s\S]+)$/i);
+				if (!t) throw new SdlError("'to <receiver>' expected after the signal");
+				to=parse(t[1]);
+			}
+			out.push({name:m[1],args,to});
 		});
 		if (!out.length) throw new SdlError("signal expected");
 		return out;

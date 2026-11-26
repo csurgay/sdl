@@ -472,7 +472,7 @@ class TheoryLayout {
 				const w=ctx.measureText(ws?" ":piece).width;
 				if (!ws && x+w>x0+width && x>x0) flushLine();
 				if (ws && x===x0) return;
-				line.push({k:"text",x,text:ws?" ":piece,font,w,color:r.link?TH.link:color,code:!!r.code&&!ws,link:r.link||null,underline:!!r.link&&!ws});
+				line.push({k:"text",x,text:ws?" ":piece,font,w,color:r.link?TH.link:color,code:!!r.code,link:r.link||null,underline:!!r.link&&!ws});
 				x+=w;
 			});
 		});
@@ -601,12 +601,14 @@ function theoryRun(ex) {
 /* the scrolling document view                                         */
 /* ------------------------------------------------------------------ */
 class TheoryView extends Area {
-	constructor() {
+	// texts: {hu, en} documents, key: where the chosen language is remembered
+	constructor(texts=SDL_THEORY_TEXT,key="sdl-theory-lang") {
 		super(0,0,10,10);
 		this.class="TheoryView";
+		this.texts=texts; this.key=key;
 		this.lang="hu";
-		try { if (localStorage.getItem("sdl-theory-lang")==="en") this.lang="en"; } catch(e) {}
-		this.blocks=TheoryDoc.parse(SDL_THEORY_TEXT[this.lang]);
+		try { if (localStorage.getItem(key)==="en") this.lang="en"; } catch(e) {}
+		this.blocks=TheoryDoc.parse(this.texts[this.lang]);
 		this.lay=null;
 		this.scroll=0;
 		this.PAD=26;
@@ -730,12 +732,12 @@ class TheoryView extends Area {
 	}
 	// switch language and stay at the same section (both texts have the same headings)
 	setLang(lang) {
-		if (lang===this.lang || !SDL_THEORY_TEXT[lang]) return;
+		if (lang===this.lang || !this.texts[lang]) return;
 		const hi=this.currentHead(), old=this.relayout();
 		const off=hi>=0 ? this.scroll-old.heads[hi].y : this.scroll;
 		this.lang=lang;
-		try { localStorage.setItem("sdl-theory-lang",lang); } catch(e) {}
-		this.blocks=TheoryDoc.parse(SDL_THEORY_TEXT[lang]);
+		try { localStorage.setItem(this.key,lang); } catch(e) {}
+		this.blocks=TheoryDoc.parse(this.texts[lang]);
 		this.lay=null;
 		const lay=this.relayout();
 		this.scrollTo(hi>=0 && lay.heads[hi] ? lay.heads[hi].y+Math.max(0,off) : off);
@@ -749,13 +751,15 @@ class TheoryView extends Area {
 }
 
 class TheoryWindow extends Window {
-	constructor(prect) {
+	// opts: {texts:{hu,en}, titles:{hu,en}, key} - default: the SDL theory
+	constructor(prect,opts={}) {
 		super("SDL Theory",prect,CLOSABLE,RESIZABLE,{minW:360,minH:200});
 		this.class="TheoryWindow";
 		this.TOCW=220;
-		this.view=this.push(new TheoryView());
-		this.title=()=>TH_STR[this.view.lang].title;
-		this.langBtns=[["en","English"],["hu","Magyar"]].map(([l,cap])=>this.push(new Button(cap,0,0,0,24,()=>this.setLang(l),{toggled:()=>this.view.lang===l,tooltip:l==="en"?"SDL Theory in English":"SDL elmélet magyarul"})));
+		this.view=this.push(new TheoryView(opts.texts||SDL_THEORY_TEXT,opts.key||"sdl-theory-lang"));
+		const titles=opts.titles||{hu:TH_STR.hu.title,en:TH_STR.en.title};
+		this.title=()=>titles[this.view.lang];
+		this.langBtns=[["en","English"],["hu","Magyar"]].map(([l,cap])=>this.push(new Button(cap,0,0,0,24,()=>this.setLang(l),{toggled:()=>this.view.lang===l,tooltip:l==="en"?"English":"Magyarul"})));
 		this.toc=this.push(new ListView(0,0,10,10,{
 			items:()=>this.view.relayout().heads.map((h,i)=>({ text:"   ".repeat(Math.max(0,h.level-2))+h.text, data:h, font:h.level<=2?THEME.fontBold:THEME.font, color:h.level===1?THEME.titleActive:THEME.text })).filter(it=>it.data.level<=3),
 			onSelect:(it)=>this.view.scrollTo(it.data.y),
@@ -787,15 +791,27 @@ class TheoryWindow extends Window {
 	onKey(k) { return this.view.onKey(k); }
 }
 
-var theoryWindow=null;
+var theoryWindow=null, manualWindow=null;
+function openDocWindow(win,lang) {
+	if (lang) win.setLang(lang);
+	win.show();
+	win.syncToc();
+	return win;
+}
+function docRect() {
+	const ca=WM.root.clientArea;
+	const w=Math.min(1120,ca.w-60), h=ca.h-40;
+	return new Rect(Math.round((ca.w-w)/2),20,w,h);
+}
 function showTheory(lang) {
-	if (!theoryWindow) {
-		const ca=WM.root.clientArea;
-		const w=Math.min(1120,ca.w-60), h=ca.h-40;
-		theoryWindow=new TheoryWindow(new Rect(Math.round((ca.w-w)/2),20,w,h));
-		ca.push(theoryWindow);
+	if (!theoryWindow) { theoryWindow=new TheoryWindow(docRect()); WM.root.clientArea.push(theoryWindow); }
+	return openDocWindow(theoryWindow,lang);
+}
+// the user manual (js/manual.js) in the same kind of window
+function showManual(lang) {
+	if (!manualWindow) {
+		manualWindow=new TheoryWindow(docRect(),{ texts:SDL_MANUAL_TEXT, titles:{hu:"Használati útmutató",en:"User manual"}, key:"sdl-manual-lang" });
+		WM.root.clientArea.push(manualWindow);
 	}
-	if (lang) theoryWindow.setLang(lang);
-	theoryWindow.show();
-	theoryWindow.syncToc();
+	return openDocWindow(manualWindow,lang);
 }
